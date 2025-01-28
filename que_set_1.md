@@ -501,3 +501,173 @@ Immutability simplifies **thread safety** because immutable objects cannot be ch
 ### **Conclusion**
 
 Immutable objects are an essential tool in concurrent programming. They simplify thread safety by eliminating the need for synchronization, ensuring consistency, and preventing shared state modification. This leads to more predictable, reliable, and bug-free code in multi-threaded applications.
+
+# Que 4
+### **What is Defensive Copying?**
+
+**Defensive copying** is the practice of creating a new copy of an object or data when passing it into or returning it from a method. This ensures that the original object remains unmodified, maintaining the integrity of an object's state.
+
+Defensive copying is particularly important in **immutable classes** to prevent external code from modifying internal mutable fields, thus violating the immutability guarantee.
+
+---
+
+### **Why is Defensive Copying Important in Immutable Classes?**
+
+1. **Ensures Immutability:**
+   - Even if a class is declared as immutable, any internal mutable objects (like arrays, collections) can compromise its immutability if they are directly exposed.
+   
+2. **Prevents External Modification:**
+   - Without defensive copying, external code could modify the internal state of an immutable object, leading to unpredictable behavior.
+
+3. **Preserves Encapsulation:**
+   - Defensive copying ensures that internal state is fully encapsulated within the object, preventing unintended side effects.
+
+---
+
+### **Examples of Defensive Copying**
+
+#### 1. **In Constructors**
+When an object with mutable fields is passed into the constructor, a defensive copy should be made to avoid directly referencing the mutable object.
+
+**Example:**
+```java
+import java.util.Date;
+
+public final class ImmutableClass {
+    private final String name;
+    private final Date dateOfBirth; // Mutable field
+
+    public ImmutableClass(String name, Date dateOfBirth) {
+        if (name == null || dateOfBirth == null) {
+            throw new IllegalArgumentException("Fields cannot be null");
+        }
+        this.name = name;
+
+        // Defensive copy of the mutable field
+        this.dateOfBirth = new Date(dateOfBirth.getTime());
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    // Getter with defensive copy
+    public Date getDateOfBirth() {
+        return new Date(dateOfBirth.getTime());
+    }
+}
+```
+
+**Explanation:**
+- The constructor creates a **new `Date` instance** using the provided `dateOfBirth` object, preventing external modification.
+- The getter also returns a new `Date` instance to ensure that the caller cannot modify the original `dateOfBirth` field.
+
+---
+
+#### 2. **In Getters**
+Getters for mutable fields should return a new copy of the object rather than exposing the internal reference.
+
+**Example:**
+```java
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public final class ImmutableList {
+    private final List<String> items;
+
+    public ImmutableList(List<String> items) {
+        if (items == null) {
+            throw new IllegalArgumentException("Items cannot be null");
+        }
+
+        // Defensive copy in the constructor
+        this.items = new ArrayList<>(items);
+    }
+
+    // Getter with defensive copy
+    public List<String> getItems() {
+        return Collections.unmodifiableList(new ArrayList<>(items));
+    }
+}
+```
+
+**Explanation:**
+- The constructor creates a new `ArrayList` from the provided `items` list to prevent external modification.
+- The getter returns an **unmodifiable view** of the copy, ensuring the internal list remains immutable.
+
+---
+
+### **What Happens Without Defensive Copying?**
+
+If defensive copying is not implemented, the immutability of the class can be compromised.
+
+**Example (Without Defensive Copying):**
+```java
+import java.util.Date;
+
+public final class MutableImmutableClass {
+    private final Date dateOfBirth;
+
+    public MutableImmutableClass(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth; // No defensive copy
+    }
+
+    public Date getDateOfBirth() {
+        return dateOfBirth; // Exposes internal reference
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        Date dob = new Date();
+        MutableImmutableClass obj = new MutableImmutableClass(dob);
+
+        // Modifying the original object
+        dob.setTime(0);
+        System.out.println(obj.getDateOfBirth()); // Prints altered date
+    }
+}
+```
+
+**Output:**
+```
+Thu Jan 01 05:30:00 IST 1970
+```
+
+In this case, the `dateOfBirth` field of the supposedly immutable class was modified, breaking immutability.
+
+---
+
+### **Benefits of Defensive Copying**
+
+1. **Data Integrity:**
+   - Ensures that the internal state of an object cannot be altered by external code.
+
+2. **Thread Safety:**
+   - Prevents concurrent threads from unintentionally corrupting shared mutable data.
+
+3. **Robustness:**
+   - Protects against unexpected bugs caused by modifications to shared objects.
+
+---
+
+### **Best Practices for Defensive Copying**
+
+1. **Copy All Mutable Fields:**
+   - Ensure that every mutable field is defensively copied, both in constructors and getters.
+
+2. **Use `final` Keyword:**
+   - Declare fields as `final` to prevent reassignment.
+
+3. **Immutable Wrappers:**
+   - For collections, use immutable wrappers like `Collections.unmodifiableList` for added safety.
+
+4. **Immutable Data Structures:**
+   - Prefer using immutable alternatives (e.g., `List.of()`, `Set.of()`, `LocalDate`) when possible.
+
+---
+
+### **Conclusion**
+
+Defensive copying is a vital technique for creating truly immutable classes in Java. By making defensive copies in constructors and getters, you can protect the internal state of an object from external modification, ensuring immutability, thread safety, and data integrity.
