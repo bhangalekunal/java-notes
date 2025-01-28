@@ -671,3 +671,184 @@ In this case, the `dateOfBirth` field of the supposedly immutable class was modi
 ### **Conclusion**
 
 Defensive copying is a vital technique for creating truly immutable classes in Java. By making defensive copies in constructors and getters, you can protect the internal state of an object from external modification, ensuring immutability, thread safety, and data integrity.
+
+# Que 5
+### **How to Make a Collection Immutable in Java**
+
+In Java, an **immutable collection** is a collection whose elements cannot be modified after creation. There are two main ways to make a collection immutable:
+
+1. **Using `Collections.unmodifiableList` (Legacy Approach)**
+2. **Using `List.of()` or `Set.of()` (Modern Approach introduced in Java 9)**
+
+---
+
+### **1. Using `Collections.unmodifiableList`**
+
+The `Collections.unmodifiableList` method wraps an existing collection in an unmodifiable wrapper. Any attempt to modify the wrapper results in an `UnsupportedOperationException`. However, the original collection is still modifiable unless you explicitly prevent it.
+
+#### Example:
+```java
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class UnmodifiableListExample {
+    public static void main(String[] args) {
+        // Create a mutable list
+        List<String> mutableList = new ArrayList<>();
+        mutableList.add("Apple");
+        mutableList.add("Banana");
+        mutableList.add("Cherry");
+
+        // Wrap the list in an unmodifiable wrapper
+        List<String> unmodifiableList = Collections.unmodifiableList(mutableList);
+
+        System.out.println("Unmodifiable List: " + unmodifiableList);
+
+        // Attempting to modify the unmodifiable list will throw an exception
+        try {
+            unmodifiableList.add("Date");
+        } catch (UnsupportedOperationException e) {
+            System.out.println("Modification attempt failed: " + e);
+        }
+
+        // Changes to the original list are reflected in the unmodifiable list
+        mutableList.add("Date");
+        System.out.println("Unmodifiable List after modifying original list: " + unmodifiableList);
+    }
+}
+```
+
+#### Output:
+```
+Unmodifiable List: [Apple, Banana, Cherry]
+Modification attempt failed: java.lang.UnsupportedOperationException
+Unmodifiable List after modifying original list: [Apple, Banana, Cherry, Date]
+```
+
+**Key Notes:**
+- The `unmodifiableList` reflects changes in the original `mutableList`.
+- To truly prevent changes, the original list must not be modified after wrapping.
+
+---
+
+### **2. Using `List.of()` (Java 9 and Later)**
+
+The `List.of()` method creates an **immutable list** directly. Any attempt to modify this list will result in an `UnsupportedOperationException`.
+
+#### Example:
+```java
+import java.util.List;
+
+public class ImmutableListExample {
+    public static void main(String[] args) {
+        // Create an immutable list
+        List<String> immutableList = List.of("Apple", "Banana", "Cherry");
+
+        System.out.println("Immutable List: " + immutableList);
+
+        // Attempting to modify the immutable list will throw an exception
+        try {
+            immutableList.add("Date");
+        } catch (UnsupportedOperationException e) {
+            System.out.println("Modification attempt failed: " + e);
+        }
+    }
+}
+```
+
+#### Output:
+```
+Immutable List: [Apple, Banana, Cherry]
+Modification attempt failed: java.lang.UnsupportedOperationException
+```
+
+**Key Notes:**
+- The `List.of()` method directly creates an immutable list that does not allow modification or null values.
+- It's a concise and modern way to create immutable collections.
+
+---
+
+### **3. Using `Collections.unmodifiableMap` and `Map.of()` for Maps**
+
+#### Using `Collections.unmodifiableMap`:
+```java
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+public class UnmodifiableMapExample {
+    public static void main(String[] args) {
+        // Create a mutable map
+        Map<String, String> mutableMap = new HashMap<>();
+        mutableMap.put("Key1", "Value1");
+        mutableMap.put("Key2", "Value2");
+
+        // Wrap the map in an unmodifiable wrapper
+        Map<String, String> unmodifiableMap = Collections.unmodifiableMap(mutableMap);
+
+        System.out.println("Unmodifiable Map: " + unmodifiableMap);
+
+        // Attempting to modify the unmodifiable map will throw an exception
+        try {
+            unmodifiableMap.put("Key3", "Value3");
+        } catch (UnsupportedOperationException e) {
+            System.out.println("Modification attempt failed: " + e);
+        }
+
+        // Changes to the original map are reflected in the unmodifiable map
+        mutableMap.put("Key3", "Value3");
+        System.out.println("Unmodifiable Map after modifying original map: " + unmodifiableMap);
+    }
+}
+```
+
+#### Using `Map.of()` (Java 9 and Later):
+```java
+import java.util.Map;
+
+public class ImmutableMapExample {
+    public static void main(String[] args) {
+        // Create an immutable map
+        Map<String, String> immutableMap = Map.of(
+                "Key1", "Value1",
+                "Key2", "Value2",
+                "Key3", "Value3"
+        );
+
+        System.out.println("Immutable Map: " + immutableMap);
+
+        // Attempting to modify the immutable map will throw an exception
+        try {
+            immutableMap.put("Key4", "Value4");
+        } catch (UnsupportedOperationException e) {
+            System.out.println("Modification attempt failed: " + e);
+        }
+    }
+}
+```
+
+#### Output:
+```
+Immutable Map: {Key1=Value1, Key2=Value2, Key3=Value3}
+Modification attempt failed: java.lang.UnsupportedOperationException
+```
+
+---
+
+### **Comparison of Approaches**
+
+| Feature                              | `Collections.unmodifiableList` / `unmodifiableMap` | `List.of()` / `Map.of()` |
+|--------------------------------------|----------------------------------------------------|--------------------------|
+| **Introduced In**                    | Java 1.2                                          | Java 9                   |
+| **Modification Attempts**            | Throws `UnsupportedOperationException`            | Throws `UnsupportedOperationException` |
+| **Reflection of Original Changes**   | Yes (if wrapping a mutable collection)            | No                       |
+| **Allows Null Values**               | Yes                                               | No                       |
+| **Thread-Safe**                      | No (requires external synchronization)            | Yes (for the collection itself) |
+
+---
+
+### **Conclusion**
+
+- Use `List.of()` or `Map.of()` when working in Java 9+ for concise and modern immutable collection creation.
+- Use `Collections.unmodifiableList` for backward compatibility with earlier Java versions. However, ensure that the original collection is not modified to maintain immutability.
