@@ -90,3 +90,109 @@ Here’s a list of **similar questions** related to designing and understanding 
 ---
 
 These questions are perfect for deep-diving into the principles of immutability, object-oriented design, and Java programming practices. Let me know if you'd like detailed answers to any of these! 😊
+
+
+
+# Que 1
+### **Differences Between Mutable and Immutable Classes**
+
+| **Aspect**                  | **Mutable Classes**                          | **Immutable Classes**                           |
+|-----------------------------|----------------------------------------------|------------------------------------------------|
+| **Definition**              | Objects can be modified after creation.     | Objects cannot be modified after creation.     |
+| **State**                   | The internal state can change over time.    | The internal state remains constant.           |
+| **Thread-Safety**           | Not thread-safe unless explicitly handled.  | Thread-safe due to unchanging state.           |
+| **Examples**                | `ArrayList`, `HashMap`, `StringBuilder`     | `String`, `Integer`, `BigDecimal`              |
+| **Performance**             | Better for frequent modifications.          | Better for situations with constant values.    |
+| **Usage**                   | Used where changes to data are required.    | Used where data consistency and safety are important. |
+| **Memory Efficiency**       | May reuse memory but risk side effects.     | May create more objects but avoids side effects. |
+
+---
+
+### **Mutable Class Example: `ArrayList`**
+
+`ArrayList` is a mutable class because you can modify its contents after creation.
+
+```java
+import java.util.ArrayList;
+
+public class MutableExample {
+    public static void main(String[] args) {
+        // Create an ArrayList
+        ArrayList<String> list = new ArrayList<>();
+        list.add("Apple");
+        list.add("Banana");
+        
+        System.out.println("Original List: " + list);
+
+        // Modify the list
+        list.add("Cherry");
+        list.remove("Banana");
+        
+        System.out.println("Modified List: " + list);
+    }
+}
+```
+
+**Output:**
+```
+Original List: [Apple, Banana]
+Modified List: [Apple, Cherry]
+```
+
+**Key Points:**
+- `list.add()` and `list.remove()` modify the original object.
+- The state of the `ArrayList` changes after modifications.
+
+---
+
+### **Immutable Class Example: `String`**
+
+`String` is an immutable class because any modification creates a new object rather than altering the original.
+
+```java
+public class ImmutableExample {
+    public static void main(String[] args) {
+        // Create a String
+        String str = "Hello";
+        System.out.println("Original String: " + str);
+
+        // Modify the String
+        String newStr = str.concat(" World");
+        System.out.println("Modified String: " + newStr);
+
+        // Check if original String changed
+        System.out.println("Original String remains: " + str);
+    }
+}
+```
+
+**Output:**
+```
+Original String: Hello
+Modified String: Hello World
+Original String remains: Hello
+```
+
+**Key Points:**
+- The `concat()` method does not modify `str`; instead, it creates a new `String` object.
+- The original `str` remains unchanged.
+
+---
+
+### **Why Choose Mutable or Immutable Classes?**
+
+#### **Use Mutable Classes When:**
+1. You need to frequently modify the object's state (e.g., `ArrayList` for dynamic collections).
+2. Performance matters, and creating new objects is expensive.
+
+#### **Use Immutable Classes When:**
+1. You need thread-safe operations without synchronization (e.g., `String` in multi-threaded environments).
+2. Data consistency and integrity are critical (e.g., keys in a `HashMap`).
+
+---
+
+### **Additional Notes:**
+- **Immutable Objects in Collections:** Immutable objects (e.g., `String`) are safe as keys in collections because their hash code won't change after being added to the collection.
+- **Custom Immutable Classes:** You can create your own immutable classes by following the principles [outlined here](#).
+
+Let me know if you'd like a deeper dive into any specific aspect! 😊
