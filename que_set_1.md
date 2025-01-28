@@ -1176,3 +1176,125 @@ public class UnmodifiableViewExample {
 3. **Defensive Design:** Prevents accidental or malicious modifications.
 
 By combining defensive copying and unmodifiable views, you can create robust immutable classes that are safe and efficient for use in real-world applications.
+
+# Que 8
+### **Differences Between Immutability and the `final` Keyword in Java**
+
+| **Aspect**               | **Immutability**                                                                                                                                   | **`final` Keyword**                                                                                         |
+|---------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| **Definition**            | Immutability refers to objects whose state (fields) cannot be changed after initialization.                                                       | The `final` keyword in Java restricts changes to variables, methods, or classes in specific ways.          |
+| **Scope**                 | Focuses on the behavior of the object as a whole.                                                                                                | Focuses on preventing specific reassignments, overrides, or subclassing.                                   |
+| **Purpose**               | Provides stability, thread safety, and predictability by ensuring the object's state cannot change.                                               | Prevents unintended changes to variables, methods, or classes to maintain integrity or control.            |
+| **Impact on Variables**   | Immutability requires ensuring all fields are immutable (e.g., making fields `final`, using immutable types, and preventing direct field access). | A `final` variable can only be assigned once, but the object it refers to may still be mutable.            |
+| **Impact on Methods**     | Immutability doesn’t directly affect methods but ensures they don’t modify the object's state.                                                    | A `final` method cannot be overridden in a subclass.                                                       |
+| **Impact on Classes**     | Immutability implies designing the class to ensure that no state changes can occur (e.g., by using `final` fields and defensive copying).         | A `final` class cannot be subclassed.                                                                      |
+| **Examples**              | `String` is an immutable class because its internal state cannot be modified after initialization.                                                | The `final` keyword is used to enforce rules like final variables (`final int x = 5;`), methods, or classes. |
+
+---
+
+### **How `final` Impacts Variables, Methods, and Classes**
+
+#### 1. **Final Variables**
+   - A `final` variable can only be assigned **once**.
+   - If it's a primitive, its value cannot change after assignment.
+   - If it's an object reference, the reference cannot change, but the object's internal state can still be modified unless the object itself is immutable.
+
+   **Example: Final Variables**
+   ```java
+   public class FinalVariableExample {
+       public static void main(String[] args) {
+           final int x = 10;
+           // x = 20; // Compilation error: cannot assign a value to a final variable
+
+           final StringBuilder sb = new StringBuilder("Hello");
+           sb.append(" World"); // Allowed because StringBuilder is mutable
+           System.out.println(sb); // Output: Hello World
+
+           // sb = new StringBuilder("Hi"); // Compilation error: cannot reassign final reference
+       }
+   }
+   ```
+
+---
+
+#### 2. **Final Methods**
+   - A `final` method cannot be overridden by subclasses.
+   - This is useful for preventing changes to critical logic in base classes.
+
+   **Example: Final Method**
+   ```java
+   class Parent {
+       public final void display() {
+           System.out.println("This is a final method.");
+       }
+   }
+
+   class Child extends Parent {
+       // Cannot override the final method from Parent
+       // public void display() { } // Compilation error
+   }
+   ```
+
+---
+
+#### 3. **Final Classes**
+   - A `final` class cannot be subclassed.
+   - This is useful for creating immutable or unmodifiable classes like `String`.
+
+   **Example: Final Class**
+   ```java
+   final class FinalClass {
+       public void showMessage() {
+           System.out.println("This is a final class.");
+       }
+   }
+
+   // class SubClass extends FinalClass { } // Compilation error: cannot subclass final class
+   ```
+
+---
+
+### **Immutability and `final` Together**
+
+Although the `final` keyword helps in achieving immutability, immutability involves additional design considerations, such as:
+1. **Making all fields `private` and `final`.**
+2. **Not providing setters.**
+3. **Ensuring that no mutable objects are exposed directly.**
+4. **Using defensive copying.**
+
+**Example: Combining Immutability and `final`**
+```java
+final class ImmutableClass {
+    private final int value;
+    private final String name;
+
+    public ImmutableClass(int value, String name) {
+        this.value = value;
+        this.name = name;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public String getName() {
+        return name;
+    }
+}
+
+public class ImmutabilityExample {
+    public static void main(String[] args) {
+        ImmutableClass obj = new ImmutableClass(10, "Immutable");
+        System.out.println(obj.getValue()); // Output: 10
+        System.out.println(obj.getName());  // Output: Immutable
+    }
+}
+```
+
+---
+
+### **Key Differences in Practice**
+- **Final ensures no reassignment or overriding; immutability ensures no state modification.**
+- While the `final` keyword is a building block for immutability, achieving immutability often requires more than just marking fields or classes as `final`. 
+
+Immutability focuses on behavior and state integrity, whereas `final` focuses on restrictions at a language level.
