@@ -196,3 +196,113 @@ Original String remains: Hello
 - **Custom Immutable Classes:** You can create your own immutable classes by following the principles [outlined here](#).
 
 Let me know if you'd like a deeper dive into any specific aspect! 😊
+
+# Que 2
+### **Why Are String Objects Immutable in Java?**
+
+String objects in Java are **immutable**, meaning their value cannot be changed after creation. This is a deliberate design decision made by the Java creators to ensure performance, security, and efficient memory usage. Below, we’ll discuss the **reasons for String immutability** and its **benefits**.
+
+---
+
+### **Reasons for String Immutability**
+
+1. **Security Reasons**  
+   - Strings are often used to handle sensitive data like database credentials, file paths, network URLs, etc.
+   - If `String` were mutable, malicious code could alter the content of a `String` reference, causing security vulnerabilities.
+     - Example: A mutable `String` containing a file path could be modified by another thread to access unintended files.
+
+2. **String Pooling (Performance Optimization)**  
+   - Java uses a **String Pool** to manage memory efficiently. When two `String` objects have the same content, they can point to the same memory location.
+   - If `String` were mutable, modifying one instance would unintentionally affect all references to that instance, breaking the integrity of the String Pool.
+
+     ```java
+     String str1 = "Hello";
+     String str2 = "Hello";
+     System.out.println(str1 == str2); // true (same reference from the String Pool)
+     ```
+
+3. **Thread Safety**  
+   - Immutability ensures that `String` objects can be safely shared across threads without requiring synchronization.
+   - In multi-threaded environments, this avoids race conditions and the need for additional locking mechanisms.
+
+4. **HashCode Consistency**  
+   - Strings are frequently used as keys in collections like `HashMap` or `HashSet`. Their immutability ensures that their **hash code remains consistent** throughout their lifetime.
+     - If `String` were mutable, changing its content would require updating its hash code, which could corrupt data structures like `HashMap`.
+
+5. **Ease of Use in Java APIs**  
+   - Many Java APIs (e.g., `ClassLoader`, `SecurityManager`) use `String` for configuration and identification. The immutability of `String` ensures these APIs remain reliable and predictable.
+
+6. **Encapsulation of Internals**  
+   - Making `String` immutable ensures that internal data structures (like character arrays) are not directly exposed or modified.
+
+---
+
+### **Benefits of String Immutability**
+
+1. **Memory Efficiency**  
+   - **String Pooling** minimizes memory usage by reusing objects. For example, literals like `"Hello"` are created once and reused wherever needed.
+   - Without immutability, pooling would not be safe, and each `String` would need to have its own instance.
+
+2. **Security**  
+   - Sensitive data remains safe, as it cannot be accidentally or maliciously altered. For example:
+     ```java
+     String dbPassword = "MySecretPassword";
+     // Cannot be modified by another part of the program
+     ```
+
+3. **Thread Safety Without Synchronization**  
+   - Immutable `String` objects eliminate the need for complex synchronization mechanisms when shared across multiple threads.
+
+4. **Improved Performance in Hash-Based Collections**  
+   - The immutability of `String` ensures that the **hash code** and **equality comparison** remain stable, making operations like `HashMap` lookups faster and more reliable.
+
+5. **Predictable Behavior**  
+   - The immutability of `String` eliminates unintended side effects. Modifying a `String` reference does not impact other parts of the program holding the same reference.
+
+6. **Consistency in APIs**  
+   - Many Java APIs rely on `String` immutability. For example:
+     - `String` literals are stored and reused efficiently.
+     - `StringBuffer` and `StringBuilder` exist for mutable string operations, maintaining separation of concerns.
+
+---
+
+### **Illustrative Example of String Immutability**
+
+```java
+public class StringImmutability {
+    public static void main(String[] args) {
+        String str = "Hello";
+
+        // Modify String
+        String newStr = str.concat(" World");
+        
+        // Original String remains unchanged
+        System.out.println("Original String: " + str); // Hello
+        System.out.println("Modified String: " + newStr); // Hello World
+    }
+}
+```
+
+**Output:**
+```
+Original String: Hello
+Modified String: Hello World
+```
+
+- The original `str` remains unchanged, and a new `String` object is created for `newStr`.
+
+---
+
+### **Counterpart: Mutable String Objects**
+
+Java provides mutable string alternatives:
+1. **`StringBuilder`** (not thread-safe)  
+2. **`StringBuffer`** (thread-safe)  
+
+These classes allow modification of strings and should be used in scenarios where frequent modifications are required.
+
+---
+
+### **Conclusion**
+
+The immutability of `String` in Java is a well-thought-out design decision that improves **security**, **performance**, **memory management**, and **thread safety**. While immutability introduces a slight overhead in terms of object creation, its benefits far outweigh the costs, making `String` a reliable and efficient part of the Java language.
