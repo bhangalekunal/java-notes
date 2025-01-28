@@ -1043,3 +1043,136 @@ public class ValueObjectExample {
 5. **Defensive Design:** Prevents unintentional side effects.
 
 By leveraging immutability, you can build applications that are more reliable, easier to debug, and better suited for concurrent environments.
+
+# Que 7
+### **Can Immutable Objects Have Mutable Fields?**
+
+Technically, an immutable object can have mutable fields, but **this breaks the true immutability of the object**. If the mutable fields can be modified directly or indirectly, the class no longer guarantees immutability. However, there are scenarios where immutable objects need to include mutable fields, like a `List` or `Map`, as part of their state.
+
+To ensure that the object remains immutable while including mutable fields:
+1. **Use defensive copying** to prevent external changes to the mutable fields.
+2. **Use unmodifiable views** to expose the mutable fields in a read-only manner.
+
+---
+
+### **1. Defensive Copying**
+
+Defensive copying involves creating a deep copy of a mutable field when:
+- The field is passed to the constructor or setter.
+- The field is accessed via a getter.
+
+This ensures that the mutable field cannot be directly modified by external code.
+
+#### **Example: Immutable Class with Defensive Copying**
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+final class ImmutableClass {
+    private final List<String> items;
+
+    // Constructor performs defensive copying
+    public ImmutableClass(List<String> items) {
+        this.items = new ArrayList<>(items); // Creates a copy of the mutable list
+    }
+
+    // Getter performs defensive copying
+    public List<String> getItems() {
+        return new ArrayList<>(items); // Returns a copy, not the original list
+    }
+}
+
+public class DefensiveCopyingExample {
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<>();
+        list.add("Apple");
+        list.add("Banana");
+
+        ImmutableClass immutable = new ImmutableClass(list);
+
+        // Attempt to modify the original list
+        list.add("Cherry");
+
+        // Immutable object's state remains unchanged
+        System.out.println(immutable.getItems()); // Output: [Apple, Banana]
+
+        // Attempt to modify the returned list
+        List<String> retrievedList = immutable.getItems();
+        retrievedList.add("Mango");
+
+        // Original immutable list remains unchanged
+        System.out.println(immutable.getItems()); // Output: [Apple, Banana]
+    }
+}
+```
+
+---
+
+### **2. Unmodifiable Views**
+
+Java provides `Collections.unmodifiableList`, `Collections.unmodifiableMap`, and similar methods to create **read-only wrappers** around mutable collections. These wrappers prevent external modification of the collection while still allowing safe access.
+
+#### **Example: Immutable Class with Unmodifiable Views**
+```java
+import java.util.Collections;
+import java.util.List;
+
+final class ImmutableClassWithUnmodifiableView {
+    private final List<String> items;
+
+    // Constructor wraps the mutable list in an unmodifiable view
+    public ImmutableClassWithUnmodifiableView(List<String> items) {
+        this.items = List.copyOf(items); // Java 10+: creates an unmodifiable copy
+    }
+
+    // Getter returns the unmodifiable view
+    public List<String> getItems() {
+        return items;
+    }
+}
+
+public class UnmodifiableViewExample {
+    public static void main(String[] args) {
+        List<String> list = List.of("Apple", "Banana");
+
+        ImmutableClassWithUnmodifiableView immutable = new ImmutableClassWithUnmodifiableView(list);
+
+        // Attempting to modify the returned list will throw an exception
+        List<String> retrievedList = immutable.getItems();
+        // retrievedList.add("Cherry"); // Throws UnsupportedOperationException
+
+        System.out.println(immutable.getItems()); // Output: [Apple, Banana]
+    }
+}
+```
+
+---
+
+### **Deep Copying vs Unmodifiable Views**
+
+| **Aspect**             | **Defensive Copying**                                     | **Unmodifiable Views**                             |
+|-------------------------|----------------------------------------------------------|---------------------------------------------------|
+| **Modification Safety** | Creates a new copy, so the original and copy are independent. | Prevents modification by exposing read-only wrappers. |
+| **Performance**         | Can be expensive for large or complex structures.         | More efficient as it avoids copying large collections. |
+| **Use Case**            | When immutability is critical and copying is acceptable.  | When performance is a concern and read-only access is sufficient. |
+
+---
+
+### **When to Use Defensive Copying or Unmodifiable Views?**
+
+1. **Use Defensive Copying When:**
+   - The object must be completely immutable in all aspects.
+   - You want to ensure no external modifications can affect internal state, even indirectly.
+
+2. **Use Unmodifiable Views When:**
+   - Performance is critical, and copying large data structures is expensive.
+   - The object should appear immutable to external users but may retain internal mutability.
+
+---
+
+### **Benefits of Handling Mutable Fields Carefully**
+1. **Thread Safety:** Prevents external threads from modifying the object's state.
+2. **Consistency:** Immutable objects are predictable and easier to debug.
+3. **Defensive Design:** Prevents accidental or malicious modifications.
+
+By combining defensive copying and unmodifiable views, you can create robust immutable classes that are safe and efficient for use in real-world applications.
