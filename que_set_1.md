@@ -1298,3 +1298,214 @@ public class ImmutabilityExample {
 - While the `final` keyword is a building block for immutability, achieving immutability often requires more than just marking fields or classes as `final`. 
 
 Immutability focuses on behavior and state integrity, whereas `final` focuses on restrictions at a language level.
+
+
+# Que 9
+### **How Immutability Impacts Performance in Java**  
+
+Immutability provides many benefits, such as thread safety and predictability, but it also comes with trade-offs in terms of **memory usage** and **efficiency**. Below, we discuss both the **advantages** and **disadvantages** of immutability in Java.
+
+---
+
+## **✅ Advantages of Immutability in Performance**  
+
+### 1. **Thread Safety Without Synchronization**
+   - Since immutable objects **cannot change** once created, multiple threads can **safely** share them without needing synchronization.
+   - This **reduces contention** and **improves performance** in multi-threaded applications.  
+   - Example: `String`, `Integer`, `LocalDateTime`, etc., are immutable and safe to use across threads without locks.
+
+   **Example: Avoiding Synchronization Overhead**
+   ```java
+   public class ImmutableExample {
+       private final String name;
+
+       public ImmutableExample(String name) {
+           this.name = name;
+       }
+
+       public String getName() {
+           return name;
+       }
+   }
+
+   // Multiple threads can use this without synchronization
+   ```
+
+---
+
+### 2. **Better Caching and Hashing Efficiency**
+   - Immutable objects can be **safely cached** and **used as keys** in hash-based collections (`HashMap`, `HashSet`).
+   - Since they don’t change, their hashcodes remain constant, reducing lookup overhead.
+
+   **Example: Using Immutable Keys in HashMap**
+   ```java
+   import java.util.HashMap;
+   import java.util.Map;
+
+   public class ImmutableKeyExample {
+       public static void main(String[] args) {
+           Map<String, String> map = new HashMap<>();
+           map.put("Hello", "World");
+
+           System.out.println(map.get("Hello")); // Output: World
+       }
+   }
+   ```
+   - If `String` were mutable, modifying it after insertion would **break** the HashMap lookup.
+
+---
+
+### 3. **Reduction in Bugs and Side Effects**
+   - No unexpected modifications mean fewer debugging headaches.
+   - This **reduces performance overhead** caused by debugging, concurrency issues, and inconsistent states.
+
+---
+
+### 4. **Safe Sharing Across Components**
+   - Objects can be safely shared across different modules or microservices **without defensive copying**.
+
+---
+
+## **❌ Disadvantages and Performance Trade-offs**  
+
+### 1. **Higher Memory Usage**
+   - Since immutable objects **cannot be modified**, any update requires creating a **new object**.
+   - This increases **heap memory consumption** and can lead to **higher garbage collection (GC) overhead**.
+
+   **Example: String Concatenation Problem**
+   ```java
+   public class StringTest {
+       public static void main(String[] args) {
+           String str = "Hello";
+           str += " World"; // Creates a new object instead of modifying the original
+           System.out.println(str);
+       }
+   }
+   ```
+   - This creates **two objects** (`"Hello"` and `"Hello World"`) instead of modifying the existing one.
+
+   **Solution: Use `StringBuilder` for performance-critical cases**
+   ```java
+   StringBuilder sb = new StringBuilder("Hello");
+   sb.append(" World");
+   System.out.println(sb.toString()); // Output: Hello World
+   ```
+
+---
+
+### 2. **Increased Garbage Collection (GC) Pressure**
+   - Creating **too many short-lived immutable objects** increases the **Garbage Collector (GC) workload**.
+   - Example: Repeated operations like appending strings or modifying collections can create a lot of temporary objects.
+
+   **Example: Heavy Object Creation in Loops**
+   ```java
+   public class ImmutableGCExample {
+       public static void main(String[] args) {
+           for (int i = 0; i < 100000; i++) {
+               String str = "Value " + i; // Creates 100,000 String objects!
+           }
+       }
+   }
+   ```
+   - **Solution:** Use `StringBuilder`, **reuse** immutable objects when possible.
+
+---
+
+### 3. **Lack of Flexibility for Large Objects**
+   - If an immutable object is **large**, modifying a small part of it requires **copying the entire object**.
+   - Example: Consider an immutable `Person` object:
+     ```java
+     class Person {
+         private final String name;
+         private final int age;
+
+         public Person(String name, int age) {
+             this.name = name;
+             this.age = age;
+         }
+
+         public Person withAge(int newAge) {
+             return new Person(this.name, newAge); // Creates a new object instead of modifying the existing one
+         }
+     }
+     ```
+   - This is **memory-intensive** if the object is large.
+
+---
+
+## **💡 Best Practices to Balance Immutability and Performance**
+1. **Use Immutability Selectively**  
+   - Keep immutable objects **small and simple** (e.g., `String`, `Integer`).
+   - For **large mutable structures**, consider making only the **critical parts** immutable.
+
+2. **Use Builders for Large Immutable Objects**  
+   - Instead of creating multiple copies of an immutable object, use a **Builder pattern**.
+   - Example:
+     ```java
+     class Person {
+         private final String name;
+         private final int age;
+
+         private Person(Builder builder) {
+             this.name = builder.name;
+             this.age = builder.age;
+         }
+
+         public static class Builder {
+             private String name;
+             private int age;
+
+             public Builder setName(String name) {
+                 this.name = name;
+                 return this;
+             }
+
+             public Builder setAge(int age) {
+                 this.age = age;
+                 return this;
+             }
+
+             public Person build() {
+                 return new Person(this);
+             }
+         }
+     }
+
+     public class Test {
+         public static void main(String[] args) {
+             Person p = new Person.Builder().setName("John").setAge(30).build();
+             System.out.println(p);
+         }
+     }
+     ```
+
+3. **Use Lazy Evaluation to Reduce Object Creation**
+   - Example: **Caching previously computed values** instead of recalculating every time.
+
+4. **Leverage Flyweight Pattern**
+   - Example: Instead of creating new instances, **reuse existing immutable objects** when possible (e.g., `Integer.valueOf()`).
+
+---
+
+## **🚀 Summary: Performance Impact of Immutability**
+| **Pros**                                      | **Cons**                                          |
+|----------------------------------------------|--------------------------------------------------|
+| Eliminates thread-safety issues             | Higher memory consumption                        |
+| Improves caching and hashing efficiency     | Increased GC pressure                           |
+| Reduces debugging and side effects          | Lack of flexibility for large objects          |
+| Safe sharing between modules                | Copying entire objects for small changes       |
+| No need for synchronization                 | Potential performance overhead in loops        |
+
+---
+
+### **💡 When to Use Immutable Objects?**
+✅ Use **immutable objects** when:
+- Thread safety is a concern (e.g., caching, multi-threading).
+- Objects are frequently used as **keys in HashMaps/Sets**.
+- You need predictable and reliable object states.
+
+🚫 Avoid **immutable objects** for:
+- **Performance-critical operations** requiring frequent modifications.
+- **Large, complex objects** where deep copies are expensive.
+
+**Bottom Line:** Immutability is powerful for **safety and reliability**, but for high-performance applications, use **mutability wisely** with patterns like **builders, caching, and lazy evaluation**. 🚀
