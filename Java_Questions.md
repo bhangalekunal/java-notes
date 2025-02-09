@@ -499,3 +499,135 @@ public class Test {
 | `static` | ❌ No (but can be hidden) | Belongs to the class, not instances |
 
 🚀 **If you want method overriding, use `protected` or `public` methods instead!**
+
+# **Does `finally` Always Execute in Java?**  
+
+In Java, the `finally` block is **guaranteed to execute** **except in a few special cases**. Let's explore when it executes and when it might not.
+
+---
+
+### ✅ **`finally` Executes in Most Cases**
+The `finally` block **always executes** after the `try` block, regardless of whether an exception occurs or not.
+
+**Example 1: `finally` executes after `try` block (No Exception)**
+```java
+public class FinallyExample {
+    public static void main(String[] args) {
+        try {
+            System.out.println("Inside try block");
+        } catch (Exception e) {
+            System.out.println("Inside catch block");
+        } finally {
+            System.out.println("Inside finally block");
+        }
+    }
+}
+```
+**Output:**
+```
+Inside try block
+Inside finally block
+```
+
+---
+
+**Example 2: `finally` executes even if an exception occurs**
+```java
+public class FinallyExample {
+    public static void main(String[] args) {
+        try {
+            System.out.println("Inside try block");
+            int a = 5 / 0;  // This causes ArithmeticException
+        } catch (Exception e) {
+            System.out.println("Inside catch block");
+        } finally {
+            System.out.println("Inside finally block");
+        }
+    }
+}
+```
+**Output:**
+```
+Inside try block
+Inside catch block
+Inside finally block
+```
+
+---
+
+### ❌ **When `finally` Does NOT Execute**
+Although `finally` **almost always executes**, there are a few special cases where it does **not**:
+
+1. **System.exit() is called inside `try` or `catch`**
+   ```java
+   public class FinallyNotExecuted {
+       public static void main(String[] args) {
+           try {
+               System.out.println("Inside try block");
+               System.exit(0);  // Terminates JVM
+           } finally {
+               System.out.println("Inside finally block");
+           }
+       }
+   }
+   ```
+   **Output:**
+   ```
+   Inside try block
+   ```
+   🚨 **Explanation:** Since `System.exit(0)` **immediately stops the JVM**, the `finally` block **will not execute**.
+
+---
+
+2. **The JVM crashes due to an error (e.g., `OutOfMemoryError`)**
+   ```java
+   public class FinallyNotExecuted {
+       public static void main(String[] args) {
+           try {
+               int[] arr = new int[Integer.MAX_VALUE];  // Causes OutOfMemoryError
+           } finally {
+               System.out.println("Inside finally block");
+           }
+       }
+   }
+   ```
+   **Output:**
+   ```
+   (Program crashes with OutOfMemoryError, finally may not execute)
+   ```
+
+---
+
+3. **Infinite loop or program termination in `try` or `catch`**
+   ```java
+   public class FinallyNotExecuted {
+       public static void main(String[] args) {
+           try {
+               while (true) {}  // Infinite loop
+           } finally {
+               System.out.println("Inside finally block");
+           }
+       }
+   }
+   ```
+   **Output:**
+   ```
+   (Program runs forever, finally never executes)
+   ```
+
+---
+
+### **🔹 Summary Table**
+| Case | Does `finally` Execute? | Reason |
+|------|----------------|--------|
+| Normal execution | ✅ Yes | Always executes |
+| Exception occurs | ✅ Yes | Executes after `catch` block |
+| `return` inside `try/catch` | ✅ Yes | Executes before returning |
+| `System.exit(0)` inside `try/catch` | ❌ No | JVM shuts down |
+| JVM crashes (OutOfMemoryError, StackOverflowError) | ❌ No | Uncontrolled crash |
+| Infinite loop in `try` or `catch` | ❌ No | Execution never reaches `finally` |
+
+### **🔹 Conclusion**
+🚀 **In 99% of cases, `finally` executes!** However, if the JVM shuts down (`System.exit(0)`) or crashes, `finally` **might not** run.
+
+Would you like an example where `finally` executes even when a `return` statement is used? 😊
