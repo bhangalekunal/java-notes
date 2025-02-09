@@ -631,3 +631,47 @@ Although `finally` **almost always executes**, there are a few special cases whe
 🚀 **In 99% of cases, `finally` executes!** However, if the JVM shuts down (`System.exit(0)`) or crashes, `finally` **might not** run.
 
 Would you like an example where `finally` executes even when a `return` statement is used? 😊
+
+# **What Methods Does the Object Class Have?**
+The `Object` class in Java is the root class of the Java class hierarchy. Every class in Java implicitly inherits from `Object`. It provides several important methods that are available to all Java objects. Here are the key methods of the `Object` class:
+
+1. **`clone()`**  
+   - **Description:** Creates and returns a copy of the object. The object must implement the `Cloneable` interface to allow cloning.  
+   - **Signature:** `protected Object clone() throws CloneNotSupportedException`
+
+2. **`equals(Object obj)`**  
+   - **Description:** Compares this object to the specified object for equality. The default implementation compares memory addresses, but it can be overridden for meaningful comparison.  
+   - **Signature:** `public boolean equals(Object obj)`
+
+3. **`finalize()`**  
+   - **Description:** Called by the garbage collector when there are no more references to the object. It is used to perform cleanup before an object is destroyed.  
+   - **Signature:** `protected void finalize() throws Throwable`
+
+4. **`getClass()`**  
+   - **Description:** Returns the runtime class of the object. This can be useful to obtain the class type of an object.  
+   - **Signature:** `public final Class<?> getClass()`
+
+5. **`hashCode()`**  
+   - **Description:** Returns a hash code for the object. This method is used in hashing-based collections like `HashMap` or `HashSet`. The default implementation returns a unique integer for the object, but it is often overridden.  
+   - **Signature:** `public int hashCode()`
+
+6. **`notify()`**  
+   - **Description:** Wakes up one thread that is waiting on the object’s monitor. This method is used in synchronized blocks for inter-thread communication.  
+   - **Signature:** `public final void notify()`
+
+7. **`notifyAll()`**  
+   - **Description:** Wakes up all threads that are waiting on the object’s monitor. Like `notify()`, it is used for inter-thread communication.  
+   - **Signature:** `public final void notifyAll()`
+
+8. **`toString()`**  
+   - **Description:** Returns a string representation of the object. By default, it returns a string containing the class name and the object’s hash code, but this method can be overridden to provide a more meaningful representation.  
+   - **Signature:** `public String toString()`
+
+9. **`wait()`**  
+   - **Description:** Causes the current thread to wait until another thread calls `notify()` or `notifyAll()` on the same object. It can also be used with a timeout.  
+   - **Signature:**  
+     - `public final void wait() throws InterruptedException`
+     - `public final void wait(long timeout) throws InterruptedException`
+     - `public final void wait(long timeout, int nanos) throws InterruptedException`
+
+These methods are inherited by all classes in Java, and many of them can be overridden for specific behavior in user-defined classes.
