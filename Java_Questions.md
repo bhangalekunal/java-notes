@@ -6602,3 +6602,305 @@ public class FactoryExample {
 - When **avoiding unnecessary type casting** improves code readability and maintainability.
 
 Would you like this formatted in **LaTeX** for your book? 📖🚀
+
+# **What is an Exception?**
+### **What is an Exception in Java?**  
+
+#### **Definition**  
+An **exception** in Java is an **unexpected event** that occurs during program execution, disrupting the normal flow of the application. It can be caused by various reasons such as invalid user input, hardware failure, or network issues.
+
+---
+
+### **1. Exception Hierarchy in Java**  
+In Java, exceptions are objects that derive from the `Throwable` class. The hierarchy is:  
+
+```
+java.lang.Throwable  
+ ├── java.lang.Error (Fatal errors, e.g., OutOfMemoryError)  
+ └── java.lang.Exception (Recoverable exceptions)  
+      ├── Checked Exceptions (e.g., IOException, SQLException)  
+      └── Unchecked Exceptions (e.g., NullPointerException, ArithmeticException)  
+```
+
+- **`Throwable`** → The root class of all exceptions and errors.
+- **`Exception`** → Represents recoverable conditions that a program should handle.
+- **`Error`** → Represents serious system-level issues that are usually not recoverable.
+
+---
+
+### **2. Types of Exceptions**  
+
+#### **(A) Checked Exceptions (Compile-time exceptions)**  
+Checked exceptions are **verified at compile time**. If a method throws a checked exception, it must either handle it using a `try-catch` block or declare it using `throws`.  
+
+**Examples:**
+- `IOException` (File not found, unable to read/write)
+- `SQLException` (Database-related errors)
+- `InterruptedException` (Thread interruptions)
+
+**Example:**
+```java
+import java.io.*;
+
+public class CheckedExceptionExample {
+    public static void main(String[] args) {
+        try {
+            FileReader file = new FileReader("file.txt"); // May throw FileNotFoundException
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + e.getMessage());
+        }
+    }
+}
+```
+---
+
+#### **(B) Unchecked Exceptions (Runtime exceptions)**  
+Unchecked exceptions occur **during runtime** and are not checked at compile time. These typically arise due to programming errors.
+
+**Examples:**
+- `NullPointerException` (Accessing an object that is null)
+- `ArithmeticException` (Division by zero)
+- `ArrayIndexOutOfBoundsException` (Accessing an invalid index in an array)
+
+**Example:**
+```java
+public class UncheckedExceptionExample {
+    public static void main(String[] args) {
+        int num = 5 / 0; // Causes ArithmeticException
+    }
+}
+```
+---
+
+#### **(C) Errors (Fatal issues)**  
+Errors are **serious problems** that the application **cannot handle**. They are mostly related to the **JVM or system resources**.
+
+**Examples:**
+- `StackOverflowError` (Infinite recursion)
+- `OutOfMemoryError` (Memory allocation issues)
+
+**Example:**
+```java
+public class StackOverflowExample {
+    public static void recursiveMethod() {
+        recursiveMethod(); // Infinite recursion causes StackOverflowError
+    }
+    public static void main(String[] args) {
+        recursiveMethod();
+    }
+}
+```
+---
+
+### **3. Exception Handling in Java**  
+To handle exceptions, Java provides the `try-catch-finally` mechanism.
+
+```java
+public class ExceptionHandlingExample {
+    public static void main(String[] args) {
+        try {
+            int result = 10 / 0;  // Risky code
+        } catch (ArithmeticException e) {
+            System.out.println("Error: Division by zero is not allowed.");
+        } finally {
+            System.out.println("Execution completed.");
+        }
+    }
+}
+```
+
+---
+
+### **4. Creating Custom Exceptions**  
+We can create our own exceptions by extending the `Exception` or `RuntimeException` class.
+
+```java
+class CustomException extends Exception {
+    public CustomException(String message) {
+        super(message);
+    }
+}
+
+public class CustomExceptionExample {
+    public static void main(String[] args) {
+        try {
+            throw new CustomException("Custom exception occurred!");
+        } catch (CustomException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+```
+
+---
+
+### **5. Why Use Exception Handling?**  
+✔ **Improves code readability**  
+✔ **Ensures graceful program termination**  
+✔ **Separates error-handling logic from business logic**  
+✔ **Helps in debugging and logging errors efficiently**  
+
+Would you like this in **LaTeX** for your book? 📖🚀
+
+# **How do we handle exceptions in Java?**
+### **How Do We Handle Exceptions in Java?**  
+
+Java provides a robust mechanism to handle exceptions using the **try-catch-finally** block, **throws** keyword, and **custom exceptions**. These mechanisms help ensure that a program can gracefully handle unexpected situations without crashing.
+
+---
+
+## **1. Exception Handling Mechanisms in Java**  
+
+### **(A) try-catch Block**  
+The `try` block contains the code that might throw an exception. The `catch` block handles the exception.
+
+#### **Syntax:**
+```java
+try {
+    // Code that may throw an exception
+} catch (ExceptionType e) {
+    // Handling code
+}
+```
+
+#### **Example: Handling Division by Zero**
+```java
+public class ExceptionExample {
+    public static void main(String[] args) {
+        try {
+            int result = 10 / 0; // Causes ArithmeticException
+        } catch (ArithmeticException e) {
+            System.out.println("Error: Cannot divide by zero.");
+        }
+    }
+}
+```
+
+---
+
+### **(B) Multiple catch Blocks**
+A `try` block can have multiple `catch` blocks to handle different types of exceptions.
+
+#### **Example: Handling Multiple Exceptions**
+```java
+public class MultipleCatchExample {
+    public static void main(String[] args) {
+        try {
+            int[] arr = new int[5];
+            arr[10] = 50; // Causes ArrayIndexOutOfBoundsException
+        } catch (ArithmeticException e) {
+            System.out.println("Arithmetic Exception occurred.");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Array Index Out of Bounds Exception occurred.");
+        }
+    }
+}
+```
+🔹 **Note:** Always catch more specific exceptions before general ones (`Exception e`).
+
+---
+
+### **(C) finally Block**
+The `finally` block **always executes**, whether an exception is thrown or not. It is mainly used for **resource cleanup**.
+
+#### **Example: Using finally Block**
+```java
+public class FinallyExample {
+    public static void main(String[] args) {
+        try {
+            int num = 5 / 0;
+        } catch (ArithmeticException e) {
+            System.out.println("Exception caught.");
+        } finally {
+            System.out.println("Finally block executed.");
+        }
+    }
+}
+```
+**Output:**
+```
+Exception caught.
+Finally block executed.
+```
+
+---
+
+### **(D) throws Keyword**
+The `throws` keyword is used to declare exceptions in the method signature. The calling method must handle or propagate it.
+
+#### **Example: Declaring an Exception Using throws**
+```java
+public class ThrowsExample {
+    static void divide() throws ArithmeticException {
+        int num = 10 / 0;
+    }
+
+    public static void main(String[] args) {
+        try {
+            divide();
+        } catch (ArithmeticException e) {
+            System.out.println("Handled Exception: " + e.getMessage());
+        }
+    }
+}
+```
+
+---
+
+### **(E) throw Keyword**
+The `throw` keyword is used to **explicitly throw** an exception.
+
+#### **Example: Throwing an Exception**
+```java
+public class ThrowExample {
+    static void checkAge(int age) {
+        if (age < 18) {
+            throw new IllegalArgumentException("Not eligible to vote.");
+        }
+        System.out.println("Eligible to vote.");
+    }
+
+    public static void main(String[] args) {
+        checkAge(16); // This will throw an exception
+    }
+}
+```
+**Output:**
+```
+Exception in thread "main" java.lang.IllegalArgumentException: Not eligible to vote.
+```
+
+---
+
+### **(F) Custom Exceptions**
+We can create our own exception classes by extending `Exception` or `RuntimeException`.
+
+#### **Example: Creating a Custom Exception**
+```java
+class CustomException extends Exception {
+    public CustomException(String message) {
+        super(message);
+    }
+}
+
+public class CustomExceptionExample {
+    public static void main(String[] args) {
+        try {
+            throw new CustomException("Custom Exception Occurred!");
+        } catch (CustomException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+```
+
+---
+
+## **2. Best Practices for Exception Handling**
+✔ **Use specific exceptions** (`IOException`, `SQLException`) instead of `Exception`.  
+✔ **Close resources properly** (use **try-with-resources** for `FileReader`, `Socket`, etc.).  
+✔ **Avoid empty catch blocks** (always log or handle exceptions).  
+✔ **Never catch `Throwable` or `Error`**, as these indicate JVM-level issues.  
+✔ **Use meaningful exception messages** to help debugging.  
+
+Would you like this answer in **LaTeX** format for your book? 📖🚀
