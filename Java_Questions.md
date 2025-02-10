@@ -2944,3 +2944,1413 @@ class MyClass implements C {  // Must implement all methods
 ✔ **Multiple inheritance is allowed for interfaces** but not for classes.  
 
 🚀 **Best Practice:** Use interface extension to create flexible and reusable designs while keeping dependencies minimal.
+
+# **What happens if we try to access a private method from a subclass?**
+If we try to access a **private** method from a subclass in Java, we will get a **compilation error** because **private methods are not inherited** by subclasses.
+
+### **Explanation:**
+- **Private methods** are accessible **only within the same class** where they are defined.
+- **They are not visible** to subclasses or any other classes.
+- Even if a subclass tries to access a private method, it will not be able to call it directly.
+
+### **Example - Attempting to Access a Private Method in a Subclass**
+```java
+class Parent {
+    private void show() {
+        System.out.println("Private method in Parent class");
+    }
+}
+
+class Child extends Parent {
+    void display() {
+        // show(); // This will cause a compilation error!
+        System.out.println("Trying to access a private method from subclass");
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        Child obj = new Child();
+        obj.display();
+    }
+}
+```
+### **Error:**
+```
+error: cannot find symbol
+        show();  // Not accessible
+        ^
+  symbol:   method show()
+  location: class Child
+```
+---
+
+### **How to Work Around This?**
+Since private methods are not inherited, we have two options:
+1. **Change the access modifier to `protected` or `public`** so that it can be accessed in the subclass.
+2. **Use a public or protected method inside the parent class that calls the private method internally.**
+
+#### **Solution 1: Use a `protected` method**
+```java
+class Parent {
+    protected void show() {
+        System.out.println("Protected method in Parent class");
+    }
+}
+
+class Child extends Parent {
+    void display() {
+        show(); // Now accessible
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        Child obj = new Child();
+        obj.display();
+    }
+}
+```
+**Output:**
+```
+Protected method in Parent class
+```
+
+#### **Solution 2: Indirect Access through a Public Method**
+```java
+class Parent {
+    private void show() {
+        System.out.println("Private method in Parent class");
+    }
+
+    public void accessShow() {
+        show(); // Indirect access
+    }
+}
+
+class Child extends Parent {
+    void display() {
+        accessShow(); // Calls the public method that internally calls the private method
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        Child obj = new Child();
+        obj.display();
+    }
+}
+```
+**Output:**
+```
+Private method in Parent class
+```
+
+### **Conclusion**
+- Directly accessing a private method from a subclass **is not possible**.
+- Use `protected` or `public` methods for controlled access.
+- Alternatively, **use a public method in the parent class** to call the private method indirectly.
+
+Let me know if you need further clarification! 🚀
+
+# **Can we extend multiple classes indirectly in Java by extending one class that extends another? How is it different from true multiple inheritance?**
+Yes, we can **indirectly extend multiple classes in Java** by following a **hierarchical inheritance** approach where one class extends another, forming a chain. However, this is **not true multiple inheritance** like in C++, where a class can directly inherit from multiple classes.
+
+---
+
+## **Indirect Multiple Inheritance in Java (Single Inheritance Chain)**
+In Java, a class can extend only **one** class at a time (`single inheritance`), but it can still inherit properties from multiple levels of a class hierarchy.
+
+### **Example: Indirect Multiple Inheritance**
+```java
+class GrandParent {
+    void grandParentMethod() {
+        System.out.println("Grandparent method");
+    }
+}
+
+class Parent extends GrandParent {
+    void parentMethod() {
+        System.out.println("Parent method");
+    }
+}
+
+class Child extends Parent {
+    void childMethod() {
+        System.out.println("Child method");
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        Child obj = new Child();
+        obj.grandParentMethod(); // Inherited from GrandParent
+        obj.parentMethod();      // Inherited from Parent
+        obj.childMethod();       // Defined in Child
+    }
+}
+```
+
+### **Output:**
+```
+Grandparent method
+Parent method
+Child method
+```
+
+#### **How it Works?**
+- `Child` indirectly **inherits** from `GrandParent` through `Parent`.
+- Even though `Child` does not directly extend `GrandParent`, it can still access its methods via `Parent`.
+
+---
+
+## **How is it Different from True Multiple Inheritance?**
+In **true multiple inheritance** (like in C++), a class can inherit directly from multiple classes. However, Java **does not support multiple inheritance of classes** to avoid the **diamond problem** (ambiguity due to multiple paths of inheritance).
+
+### **Example: True Multiple Inheritance in C++ (Not Possible in Java)**
+```cpp
+class A {
+public:
+    void show() { cout << "Class A" << endl; }
+};
+
+class B {
+public:
+    void show() { cout << "Class B" << endl; }
+};
+
+class C : public A, public B {
+    // Ambiguity: C++ compiler does not know which `show()` to call
+};
+
+int main() {
+    C obj;
+    obj.show(); // ERROR: Ambiguous method call
+    return 0;
+}
+```
+👉 In Java, this ambiguity is **avoided** by **not allowing multiple class inheritance**.
+
+---
+
+## **How to Achieve Multiple Inheritance in Java?**
+Since Java **does not allow multiple inheritance through classes**, it provides **interfaces** as an alternative.
+
+### **Example: Achieving Multiple Inheritance Using Interfaces**
+```java
+interface A {
+    void showA();
+}
+
+interface B {
+    void showB();
+}
+
+class C implements A, B {  // Implements multiple interfaces
+    public void showA() {
+        System.out.println("Class A Method");
+    }
+    
+    public void showB() {
+        System.out.println("Class B Method");
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        C obj = new C();
+        obj.showA();
+        obj.showB();
+    }
+}
+```
+
+### **Output:**
+```
+Class A Method
+Class B Method
+```
+
+#### **Key Differences:**
+| **Feature**                 | **Indirect Multiple Inheritance** | **True Multiple Inheritance** (Not in Java) |
+|------------------------------|----------------------------------|--------------------------------|
+| **Inheritance Type**         | Single inheritance chain        | Multiple direct parent classes |
+| **Number of Superclasses**   | One at a time                   | Multiple at the same level    |
+| **Code Ambiguity?**          | No                              | Yes, due to the diamond problem |
+| **Method Overriding Conflicts?** | No                         | Yes, if multiple superclasses define the same method |
+| **Achievable in Java?**      | ✅ Yes                         | ❌ No (Java does not support multiple inheritance of classes) |
+| **Alternative in Java**      | Interfaces (`implements`)       | Supported in C++, Python, etc. |
+
+---
+
+## **Conclusion**
+- **Java allows indirect multiple inheritance** using **single inheritance chains** (one class extends another).
+- **True multiple inheritance** is **not supported** in Java to avoid **ambiguity** and **complexity**.
+- **Interfaces** provide a way to achieve **multiple inheritance-like behavior** in Java without the issues of multiple class inheritance.
+
+Let me know if you need further clarification! 🚀
+
+# **What happens if an Object is no longer referenced but has a finalize() method? Will it be garbage collected?**
+If an object is **no longer referenced** but has a **`finalize()`** method, it **may not be immediately garbage collected**. Here’s what happens step by step:
+
+### **1. When an Object Becomes Unreachable**
+- If an object has no references pointing to it, it **becomes eligible for garbage collection**.
+- However, if the object overrides the **`finalize()`** method, the **garbage collector calls `finalize()` before actually removing the object**.
+
+### **2. Execution of `finalize()`**
+- The **`finalize()`** method gives the object a **last chance to perform cleanup** before it is removed.
+- If **`finalize()` resurrects the object** by assigning `this` to a **static reference**, the object **is no longer eligible for garbage collection**.
+- If the object is not resurrected, it **will be garbage collected in the next cycle**.
+
+### **3. Is `finalize()` Guaranteed to Run?**
+- **No.** The JVM **does not guarantee** that `finalize()` will always be executed.
+- If the JVM exits before garbage collection occurs, `finalize()` **might never run**.
+- The **order of execution** of `finalize()` is **not predictable**, and it may delay object destruction.
+
+---
+
+### **Example: What Happens When `finalize()` is Used?**
+```java
+class Test {
+    @Override
+    protected void finalize() throws Throwable {
+        System.out.println("finalize() called!");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Test obj = new Test();
+        obj = null; // Object becomes eligible for GC
+
+        System.gc(); // Suggests JVM to run garbage collection
+        
+        System.out.println("End of main method");
+    }
+}
+```
+#### **Possible Output (Not Guaranteed)**
+```
+End of main method
+finalize() called!
+```
+**OR (if GC doesn't run in time):**
+```
+End of main method
+```
+---
+
+### **4. Can We Prevent Garbage Collection in `finalize()`?**
+Yes! If `finalize()` **assigns the object reference back to a variable**, the object **escapes garbage collection**.
+
+#### **Example: Reviving an Object in `finalize()`**
+```java
+class Revive {
+    static Revive instance;
+
+    @Override
+    protected void finalize() throws Throwable {
+        System.out.println("finalize() called! Reviving object...");
+        instance = this; // Reviving the object
+    }
+}
+
+public class TestFinalize {
+    public static void main(String[] args) {
+        Revive obj = new Revive();
+        obj = null; // Eligible for GC
+
+        System.gc(); // Suggest garbage collection
+
+        // Check if object was revived
+        if (Revive.instance != null) {
+            System.out.println("Object revived!");
+        } else {
+            System.out.println("Object was garbage collected.");
+        }
+    }
+}
+```
+#### **Possible Output:**
+```
+finalize() called! Reviving object...
+Object revived!
+```
+Here, the object **escapes garbage collection** because `finalize()` assigns it to a static reference.
+
+---
+
+### **5. Why is `finalize()` Deprecated?**
+Since **Java 9**, `finalize()` has been **deprecated** because:
+1. **Unpredictability** – It is not guaranteed to run.
+2. **Performance Issues** – It slows down garbage collection.
+3. **Safer Alternatives Exist** – Use **`try-with-resources`** or **explicit cleanup methods** instead.
+
+### **6. Best Alternative: Using `AutoCloseable` for Cleanup**
+Instead of `finalize()`, we should use **`AutoCloseable`** to clean up resources explicitly.
+
+#### **Example: Using `AutoCloseable` Instead of `finalize()`**
+```java
+class Resource implements AutoCloseable {
+    public void use() {
+        System.out.println("Using resource...");
+    }
+
+    @Override
+    public void close() {
+        System.out.println("Resource closed!");
+    }
+}
+
+public class TestResource {
+    public static void main(String[] args) {
+        try (Resource res = new Resource()) {
+            res.use();
+        } // `close()` is automatically called here
+    }
+}
+```
+#### **Output:**
+```
+Using resource...
+Resource closed!
+```
+Here, **`close()`** ensures cleanup without relying on the unpredictable `finalize()`.
+
+---
+
+### **7. Summary**
+| **Scenario** | **Does the Object Get Garbage Collected?** |
+|-------------|----------------------------------|
+| Object is unreferenced, no `finalize()` | ✅ Yes, garbage collected |
+| Object is unreferenced, has `finalize()` | 🔄 `finalize()` runs first, then garbage collected (if not revived) |
+| `finalize()` resurrects object (`this` assigned to static ref) | ❌ No, object survives |
+| JVM exits before GC runs | ❌ `finalize()` might not run at all |
+| Using `AutoCloseable` (`try-with-resources`) | ✅ Safer alternative, ensures proper cleanup |
+
+---
+
+### **Final Takeaway**
+- If an **unreferenced object has `finalize()`**, the JVM **calls `finalize()` before deleting the object**.
+- **If `finalize()` resurrects the object**, it **escapes garbage collection**.
+- **`finalize()` is deprecated** in favor of **`AutoCloseable`** and explicit cleanup methods.
+- Always prefer **try-with-resources (`AutoCloseable`)** instead of relying on `finalize()`.
+
+Would you like any more clarifications? 🚀
+
+# **Can an object be garbage collected while it is still reachable?**
+No, an object **cannot** be garbage collected while it is still **strongly reachable** in Java. However, there are some exceptions where an object may be garbage collected even if it appears reachable under certain conditions.
+
+---
+
+### **1. Normally, a Reachable Object is Not Garbage Collected**
+- In Java, an object is **only eligible for garbage collection when there are no strong references** pointing to it.
+- If an object is still accessible by a running thread, it **remains in memory**.
+
+#### **Example: Strongly Reachable Object (Not Collected)**
+```java
+class Test {
+    int data = 10;
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Test obj = new Test(); // obj is reachable
+        System.gc(); // Suggest garbage collection
+        System.out.println("Object is still reachable: " + obj.data);
+    }
+}
+```
+**Output:**
+```
+Object is still reachable: 10
+```
+Here, `obj` is still referenced, so it **cannot be garbage collected**.
+
+---
+
+### **2. When Can a Reachable Object Be Garbage Collected?**
+There are **some special cases** where an object might be garbage collected **even if it seems reachable**:
+
+#### **Case 1: Objects with Weak or Soft References**
+- Java provides **Weak References** and **Soft References** in `java.lang.ref` that allow objects to be garbage collected even if they are still referenced.
+
+##### **WeakReference Example (Object Can Be Collected)**
+```java
+import java.lang.ref.WeakReference;
+
+class Test {
+    protected void finalize() {
+        System.out.println("Object is garbage collected");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        WeakReference<Test> weakRef = new WeakReference<>(new Test());
+
+        System.gc(); // Request garbage collection
+
+        if (weakRef.get() == null) {
+            System.out.println("Object is garbage collected");
+        } else {
+            System.out.println("Object is still reachable");
+        }
+    }
+}
+```
+**Possible Output:**
+```
+Object is garbage collected
+Object is garbage collected
+```
+- `WeakReference` objects **do not prevent garbage collection**, so the object can be **collected even if reachable through a weak reference**.
+
+##### **SoftReference Example (Collected Only in Low Memory)**
+```java
+import java.lang.ref.SoftReference;
+
+class Test {
+    protected void finalize() {
+        System.out.println("Object is garbage collected");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        SoftReference<Test> softRef = new SoftReference<>(new Test());
+
+        System.gc(); // Object may not be garbage collected immediately
+
+        if (softRef.get() == null) {
+            System.out.println("Object is garbage collected");
+        } else {
+            System.out.println("Object is still reachable");
+        }
+    }
+}
+```
+- **Soft references** allow the object to stay in memory until JVM needs space.
+- The object is collected **only if memory is low**.
+
+---
+
+#### **Case 2: Phantom References (Always Collectible)**
+- **Phantom references** are used for **post-mortem cleanup**. The object **is always eligible for GC**, but can still be tracked.
+
+---
+
+#### **Case 3: Explicit `System.exit()` Before Object is Used**
+If the JVM shuts down before an object is used, **garbage collection can remove objects even if reachable**.
+
+```java
+class Test {
+    protected void finalize() {
+        System.out.println("Object is garbage collected");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Test obj = new Test();
+        System.exit(0); // JVM exits, object is garbage collected
+    }
+}
+```
+- **No output** (JVM exits before printing).
+- `obj` **can be garbage collected**, as JVM shutdown makes its reachability irrelevant.
+
+---
+
+#### **Case 4: Circular References in Legacy Java (Solved by GC)**
+In **older Java versions**, circular references between objects **could cause memory leaks** if garbage collection was reference-count-based.
+
+```java
+class A {
+    B b;
+}
+
+class B {
+    A a;
+}
+
+public class Main {
+    public static void main(String[] args) {
+        A objA = new A();
+        B objB = new B();
+
+        objA.b = objB;
+        objB.a = objA;
+
+        objA = null;
+        objB = null;
+
+        System.gc(); // Both objects can be collected now
+    }
+}
+```
+- **Modern Java GCs** detect circular references and **collect them properly**.
+
+---
+
+### **Summary**
+| **Scenario** | **Can Object Be Garbage Collected?** |
+|-------------|----------------------------------|
+| **Strong reference exists** | ❌ No, object is not collected |
+| **WeakReference used** | ✅ Yes, object is collected |
+| **SoftReference used** | 🔄 Maybe, collected only if memory is low |
+| **PhantomReference used** | ✅ Yes, object is always eligible for GC |
+| **System.exit() before use** | ✅ Yes, JVM shutdown forces cleanup |
+| **Circular references** | ✅ Yes, modern GC detects and removes them |
+
+---
+
+### **Final Takeaway**
+- **Normally, a reachable object cannot be garbage collected.**
+- **Weak and soft references** allow objects to be collected even if reachable.
+- **JVM shutdown (`System.exit()`) may cause premature garbage collection.**
+- **Circular references are handled well in modern Java GC algorithms.**
+
+Would you like a deep dive into JVM Garbage Collection strategies? 🚀
+
+# **Why should we avoid using finalize() for cleanup in Java?**
+Using **`finalize()`** for cleanup in Java is **strongly discouraged** and has even been **deprecated** since **Java 9** due to several critical issues. Here’s why:
+
+---
+
+## **1. Unpredictability – No Guarantee of Execution**
+- The **JVM does not guarantee** that `finalize()` will ever be called.
+- If an object becomes eligible for garbage collection **but GC does not run**, `finalize()` will **never execute**.
+- JVM **may delay execution** of `finalize()`, causing **resource leaks**.
+
+🔴 **Example: Unpredictable Execution of `finalize()`**
+```java
+class Test {
+    @Override
+    protected void finalize() {
+        System.out.println("finalize() called!");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        new Test(); // Object is eligible for GC immediately
+        System.gc(); // Request GC, but it may not run immediately
+        System.out.println("Main method finished");
+    }
+}
+```
+✅ **Possible Output 1:**
+```
+Main method finished
+finalize() called!
+```
+❌ **Possible Output 2 (If GC does not run):**
+```
+Main method finished
+```
+🔹 `finalize()` **may or may not execute**, leading to **unreliable cleanup**.
+
+---
+
+## **2. Performance Issues – Slows Down Garbage Collection**
+- Objects with `finalize()` **take longer** to be garbage collected.
+- When an object is found to have `finalize()`, it is **moved to a special queue**.
+- A **separate GC thread** must process this queue **before reclaiming memory**, increasing **GC overhead**.
+
+🔴 **Example: Delayed Garbage Collection**
+```java
+class Test {
+    @Override
+    protected void finalize() {
+        System.out.println("finalize() called!");
+        try {
+            Thread.sleep(5000); // Simulating delay
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        new Test();
+        System.gc(); // Request GC
+        System.out.println("Main method finished");
+    }
+}
+```
+**Expected Output:**
+```
+Main method finished
+(finalize() runs after ~5 seconds)
+finalize() called!
+```
+🔹 The **finalization queue causes unnecessary delays**, impacting performance.
+
+---
+
+## **3. `finalize()` Can Resurrect Objects, Causing Memory Leaks**
+- **If `finalize()` assigns the object reference to a static variable, the object becomes reachable again**.
+- This **prevents it from being garbage collected**, causing **memory leaks**.
+
+🔴 **Example: Object Resurrection**
+```java
+class Test {
+    static Test instance;
+
+    @Override
+    protected void finalize() {
+        System.out.println("Resurrecting object...");
+        instance = this; // Resurrecting object
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Test obj = new Test();
+        obj = null; // Object eligible for GC
+
+        System.gc(); // Request GC
+
+        if (Test.instance != null) {
+            System.out.println("Object was resurrected and not garbage collected!");
+        }
+    }
+}
+```
+**Output:**
+```
+Resurrecting object...
+Object was resurrected and not garbage collected!
+```
+🔹 Since `finalize()` **re-referenced the object**, it **escaped garbage collection**, leading to **memory leaks**.
+
+---
+
+## **4. Alternative Cleanup Methods Are Better**
+Instead of `finalize()`, **Java provides better mechanisms** for resource management:
+
+### ✅ **Use `try-with-resources` (`AutoCloseable`)**
+The **best alternative** for closing resources like files, database connections, etc.
+```java
+class Resource implements AutoCloseable {
+    public void use() {
+        System.out.println("Using resource...");
+    }
+
+    @Override
+    public void close() {
+        System.out.println("Resource closed!");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        try (Resource res = new Resource()) {
+            res.use();
+        } // `close()` is automatically called
+    }
+}
+```
+**Output:**
+```
+Using resource...
+Resource closed!
+```
+🔹 **Ensures cleanup happens immediately, unlike `finalize()`**.
+
+---
+
+### ✅ **Use Explicit `close()` Methods**
+If not using `AutoCloseable`, explicitly **call `close()`** in a `finally` block.
+```java
+class Resource {
+    public void close() {
+        System.out.println("Resource manually closed!");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Resource res = new Resource();
+        try {
+            // Use resource
+        } finally {
+            res.close(); // Ensure cleanup
+        }
+    }
+}
+```
+**Output:**
+```
+Resource manually closed!
+```
+🔹 **Predictable cleanup without relying on GC**.
+
+---
+
+## **5. `finalize()` is Deprecated**
+- **Java 9 onwards, `finalize()` is deprecated**.
+- Java **discourages** its use due to all the issues mentioned.
+- JVM will now **issue warnings** if `finalize()` is used.
+
+---
+
+## **Summary**
+| **Issue** | **Why Avoid `finalize()`?** |
+|------------|-------------------------|
+| **Unpredictability** | `finalize()` may **never run** if GC doesn't execute. |
+| **Performance Overhead** | Objects with `finalize()` take **longer to be garbage collected**. |
+| **Resurrection Problems** | `finalize()` can **bring objects back to life**, causing **memory leaks**. |
+| **Better Alternatives** | Use **`try-with-resources`** or **explicit `close()` methods** instead. |
+| **Deprecated** | `finalize()` is officially **deprecated in Java 9+**. |
+
+---
+
+## **Final Takeaway**
+🚫 **Never use `finalize()` for cleanup!** Instead:
+✅ **Use `AutoCloseable` with `try-with-resources` for guaranteed cleanup.**  
+✅ **Use explicit `close()` methods in a `finally` block if necessary.**  
+
+Would you like a deeper dive into Java garbage collection strategies? 🚀
+
+# **What is the difference between SoftReference, WeakReference, and PhantomReference in Java?**
+In Java, **SoftReference**, **WeakReference**, and **PhantomReference** are types of **reference objects** that allow different levels of control over **garbage collection (GC)** behavior. They are part of the `java.lang.ref` package and are used to manage memory efficiently.
+
+---
+
+## **Key Differences Between SoftReference, WeakReference, and PhantomReference**
+| **Feature**       | **SoftReference** | **WeakReference** | **PhantomReference** |
+|-------------------|------------------|------------------|------------------|
+| **Garbage Collection Timing** | Cleared **only when JVM is low on memory** | Cleared **as soon as no strong references exist** | Cleared **only after finalize() has run** and before GC reclaims memory |
+| **Use Case** | **Cache management** (e.g., image caching) | **Short-lived objects like Maps' keys** (e.g., WeakHashMap) | **Tracking object finalization** (e.g., cleaning up resources) |
+| **Reference Availability Before GC** | Available **until JVM needs memory** | Available **until GC collects it** | **Never accessible**, even before GC runs |
+| **Performance Impact** | Improves performance by delaying GC | Helps reduce memory leaks | Requires a **ReferenceQueue** for notification |
+| **Example Scenario** | Caching **large objects** (images, data) | Weak references in **WeakHashMap** (e.g., keys that should be garbage collected) | **Post-mortem cleanup** after object is finalized |
+
+---
+
+## **1. SoftReference (Ideal for Caching)**
+### ✅ **Objects are garbage collected only when memory is low.**
+- **Used for implementing caches** where objects should be retained as long as enough memory is available.
+- **Not collected immediately** after the object becomes unreachable.
+
+### **Example: SoftReference in Action**
+```java
+import java.lang.ref.SoftReference;
+
+class LargeData {
+    private byte[] data = new byte[10 * 1024 * 1024]; // 10MB
+}
+
+public class SoftReferenceExample {
+    public static void main(String[] args) {
+        SoftReference<LargeData> softRef = new SoftReference<>(new LargeData());
+
+        System.gc(); // Suggest garbage collection
+
+        if (softRef.get() != null) {
+            System.out.println("Object is still available.");
+        } else {
+            System.out.println("Object was garbage collected.");
+        }
+    }
+}
+```
+**Possible Output:**
+```
+Object is still available.
+```
+**If memory is low:**
+```
+Object was garbage collected.
+```
+🔹 **Use Case:** Caching large objects like images, database query results, etc.
+
+---
+
+## **2. WeakReference (Used in WeakHashMap)**
+### ✅ **Objects are garbage collected as soon as there are no strong references.**
+- Ideal for **storing metadata or keys in `WeakHashMap`**.
+- **GC removes objects as soon as they become unreachable**.
+
+### **Example: WeakReference Behavior**
+```java
+import java.lang.ref.WeakReference;
+
+class Data {
+    private int value = 100;
+}
+
+public class WeakReferenceExample {
+    public static void main(String[] args) {
+        WeakReference<Data> weakRef = new WeakReference<>(new Data());
+
+        System.gc(); // Request GC
+
+        if (weakRef.get() != null) {
+            System.out.println("Object is still available.");
+        } else {
+            System.out.println("Object was garbage collected.");
+        }
+    }
+}
+```
+**Output (Most Likely):**
+```
+Object was garbage collected.
+```
+🔹 **Use Case:**  
+- Used in **WeakHashMap**, where keys are automatically removed when they are no longer strongly referenced.
+- Helps **prevent memory leaks** in cache implementations.
+
+### **Example: WeakHashMap Auto Removal**
+```java
+import java.util.WeakHashMap;
+
+public class WeakHashMapExample {
+    public static void main(String[] args) {
+        WeakHashMap<String, String> weakMap = new WeakHashMap<>();
+        String key = new String("TemporaryKey"); // Weakly referenced key
+        weakMap.put(key, "Value");
+
+        key = null; // Key becomes unreachable
+        System.gc(); // Request GC
+
+        System.out.println("WeakHashMap: " + weakMap); // Should be empty if GC ran
+    }
+}
+```
+🔹 **When `GC` runs, the key-value pair is removed automatically**.
+
+---
+
+## **3. PhantomReference (For Object Finalization)**
+### ✅ **Objects are never accessible through PhantomReference.**
+- **Used for post-mortem cleanup tasks** (e.g., closing file handles, native resource cleanup).
+- **Always requires a `ReferenceQueue`** to notify when an object is about to be collected.
+
+### **Example: Using PhantomReference for Cleanup**
+```java
+import java.lang.ref.PhantomReference;
+import java.lang.ref.ReferenceQueue;
+
+class Resource {
+    protected void finalize() {
+        System.out.println("Resource is being finalized.");
+    }
+}
+
+public class PhantomReferenceExample {
+    public static void main(String[] args) {
+        ReferenceQueue<Resource> refQueue = new ReferenceQueue<>();
+        PhantomReference<Resource> phantomRef = new PhantomReference<>(new Resource(), refQueue);
+
+        System.gc(); // Request GC
+
+        if (refQueue.poll() != null) {
+            System.out.println("Object is ready for garbage collection.");
+        } else {
+            System.out.println("Object is not yet finalized.");
+        }
+    }
+}
+```
+**Output (Expected after GC runs):**
+```
+Resource is being finalized.
+Object is ready for garbage collection.
+```
+🔹 **Use Case:** Used in **memory-sensitive applications** to clean up resources like file handles, sockets, etc.
+
+---
+
+## **Summary Table**
+| **Reference Type**  | **When Is Object Collected?** | **Reference Available Before GC?** | **Common Use Cases** |
+|---------------------|-----------------------------|--------------------------------|----------------------|
+| **SoftReference**   | **Only if JVM is low on memory** | ✅ Yes (Until memory is needed) | **Caching large objects** (e.g., images, database results) |
+| **WeakReference**   | **As soon as no strong references exist** | ✅ Yes (Until GC runs) | **WeakHashMap, short-lived metadata storage** |
+| **PhantomReference** | **After finalize() runs, before memory is reclaimed** | ❌ No (Cannot be accessed) | **Post-mortem cleanup, resource management** |
+
+---
+
+## **When to Use Each Reference Type?**
+| **Scenario** | **Best Reference Type** |
+|-------------|--------------------|
+| Caching images, large objects | **SoftReference** |
+| Storing metadata, map keys that should be auto-removed | **WeakReference** |
+| Detecting object finalization for resource cleanup | **PhantomReference** |
+
+---
+
+## **Final Takeaway**
+- **Use `SoftReference` for caching**, as objects stay until memory is needed.
+- **Use `WeakReference` for weakly reachable objects**, like **WeakHashMap keys**.
+- **Use `PhantomReference` for cleanup operations** when **finalization is required**.
+
+Would you like more examples on reference queues or garbage collection behavior? 🚀
+
+# **What happens if a thread inside a synchronized block throws an exception? Will the lock be released?**
+Yes, if a thread **inside a `synchronized` block throws an exception**, the **lock will be automatically released**.
+
+---
+
+## **Understanding Lock Behavior in Synchronized Blocks**
+When a thread enters a **synchronized block or method**, it acquires a **monitor lock** on the object. This lock ensures that no other thread can enter another synchronized block on the **same object** until the lock is released.
+
+However, if an **exception occurs** inside the synchronized block, the lock is **automatically released** when the thread **exits the block**, allowing other threads to proceed.
+
+---
+
+### **Example: Lock is Released on Exception**
+```java
+class SharedResource {
+    public synchronized void process() {
+        System.out.println(Thread.currentThread().getName() + " acquired the lock.");
+        
+        try {
+            int result = 10 / 0; // This will cause an ArithmeticException
+        } catch (Exception e) {
+            System.out.println(Thread.currentThread().getName() + " encountered an exception: " + e.getMessage());
+        }
+        
+        System.out.println(Thread.currentThread().getName() + " is exiting.");
+    }
+}
+
+public class SynchronizedExceptionExample {
+    public static void main(String[] args) {
+        SharedResource resource = new SharedResource();
+
+        Runnable task = () -> {
+            resource.process();
+        };
+
+        Thread t1 = new Thread(task, "Thread-1");
+        Thread t2 = new Thread(task, "Thread-2");
+
+        t1.start();
+        t2.start();
+    }
+}
+```
+### **Expected Output:**
+```
+Thread-1 acquired the lock.
+Thread-1 encountered an exception: / by zero
+Thread-1 is exiting.
+Thread-2 acquired the lock.
+Thread-2 encountered an exception: / by zero
+Thread-2 is exiting.
+```
+
+### **Key Observations:**
+1. **Thread-1 acquires the lock and encounters an exception.**
+2. **Even though an exception occurs, the lock is automatically released.**
+3. **Thread-2 is then able to acquire the lock and execute.**
+
+---
+
+## **What Happens if We Use a `finally` Block?**
+If a **finally block** is present, it will always execute, ensuring resource cleanup before the lock is released.
+
+```java
+class SharedResource {
+    public synchronized void process() {
+        System.out.println(Thread.currentThread().getName() + " acquired the lock.");
+        try {
+            int result = 10 / 0; // Causes an exception
+        } finally {
+            System.out.println(Thread.currentThread().getName() + " finally block executed.");
+        }
+        System.out.println(Thread.currentThread().getName() + " is exiting.");
+    }
+}
+```
+### **Output:**
+```
+Thread-1 acquired the lock.
+Thread-1 finally block executed.
+Thread-1 is exiting.
+Thread-2 acquired the lock.
+Thread-2 finally block executed.
+Thread-2 is exiting.
+```
+🔹 **Even after an exception, the lock is released, and the `finally` block ensures any necessary cleanup.**
+
+---
+
+## **What About `synchronized` Methods?**
+The same behavior applies to **synchronized methods**. If an exception occurs, the lock is **released before the exception propagates**.
+
+```java
+class SharedResource {
+    public synchronized void process() {
+        System.out.println(Thread.currentThread().getName() + " acquired the lock.");
+        throw new RuntimeException("Simulated Exception");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        SharedResource resource = new SharedResource();
+
+        Thread t1 = new Thread(() -> resource.process(), "Thread-1");
+        Thread t2 = new Thread(() -> resource.process(), "Thread-2");
+
+        t1.start();
+        t2.start();
+    }
+}
+```
+### **Expected Output:**
+```
+Thread-1 acquired the lock.
+Exception in thread "Thread-1" java.lang.RuntimeException: Simulated Exception
+Thread-2 acquired the lock.
+Exception in thread "Thread-2" java.lang.RuntimeException: Simulated Exception
+```
+🔹 **Thread-2 acquires the lock immediately after Thread-1 throws an exception, confirming that the lock was released.**
+
+---
+
+## **Conclusion**
+| **Scenario** | **Will Lock Be Released?** | **Why?** |
+|-------------|------------------|--------------------------------------------------|
+| **Exception inside synchronized block** | ✅ Yes | JVM automatically releases the lock when the thread exits. |
+| **Exception inside synchronized method** | ✅ Yes | Lock is released before the exception propagates. |
+| **`finally` block present** | ✅ Yes | `finally` executes before the lock is released. |
+| **Manually catching the exception** | ✅ Yes | Even if caught, the thread exits the block, releasing the lock. |
+
+### **Key Takeaways**
+- **Locks are always released when a thread exits a synchronized block/method, even if an exception occurs.**
+- **Using a `finally` block is a good practice for cleanup.**
+- **Handling exceptions inside synchronized blocks ensures thread stability.**
+
+Let me know if you need more examples! 🚀
+
+# **Why is String immutable in Java? What benefits does this provide?**
+### **Why is `String` Immutable in Java?**
+In Java, the `String` class is **immutable**, meaning **once a `String` object is created, it cannot be changed**. Any modification to a `String` results in a new object being created in memory.
+
+This design choice was made to ensure **security, performance, caching efficiency, and thread safety**.
+
+---
+
+## **Benefits of String Immutability**
+| **Reason** | **How It Helps?** |
+|-----------|------------------|
+| **1. Security** | Prevents security threats in sensitive operations (e.g., passwords, class loading, file paths). |
+| **2. String Pool Optimization** | Enables the use of the **String Pool**, reducing memory consumption. |
+| **3. Thread Safety** | Eliminates the need for synchronization, making `String` inherently thread-safe. |
+| **4. Efficient HashCode Caching** | Hash codes are cached, improving performance for hash-based collections. |
+| **5. Predictability** | Ensures consistency in APIs that rely on constant keys (e.g., network connections, database queries). |
+
+---
+
+## **1. Security – Prevents Unwanted Modifications**
+If `String` were **mutable**, it could cause serious security vulnerabilities.
+
+🔴 **Example: Compromised Security in Mutable String**
+```java
+class SecurityExample {
+    public static void main(String[] args) {
+        String password = "securePassword123";
+        authenticate(password);
+        password = "hackedPassword"; // If String were mutable, this could alter authentication behavior!
+    }
+
+    static void authenticate(String password) {
+        System.out.println("Authenticating user with: " + password);
+    }
+}
+```
+✅ **With immutable `String`, passwords remain unchanged**, ensuring data integrity.
+
+---
+
+## **2. String Pool Optimization – Saves Memory**
+Since strings are **immutable**, Java optimizes memory usage by storing **string literals in the String Pool**.
+
+🔵 **Example: String Pool Behavior**
+```java
+String s1 = "Hello";
+String s2 = "Hello"; // Reuses the same object from the String Pool
+
+System.out.println(s1 == s2); // Output: true (Both refer to the same memory location)
+```
+🚀 **Advantage:**  
+- No need to create multiple copies of the same string.
+- Saves memory by reusing existing string objects.
+
+---
+
+## **3. Thread Safety – No Synchronization Needed**
+Immutable objects are **inherently thread-safe** because they **cannot be modified**.
+
+🔴 **Example: Mutable String in Multi-threading (Unsafe)**
+```java
+class MutableString {
+    StringBuilder str = new StringBuilder("Hello");
+
+    void update() {
+        str.append(" World");
+    }
+}
+```
+🔹 **If multiple threads modify `str`, race conditions may occur**.
+
+✅ **Immutable Strings Avoid This Issue**
+```java
+class SafeString {
+    final String str = "Hello";
+
+    void update() {
+        String newStr = str + " World"; // Creates a new object instead of modifying existing one
+    }
+}
+```
+🚀 **Benefit:** No need for explicit synchronization when using `String` across multiple threads.
+
+---
+
+## **4. Efficient HashCode Caching – Improves Performance**
+- `String` overrides `hashCode()` and **caches the computed value**.
+- This makes `String` highly efficient for use in **hash-based collections** like `HashMap` and `HashSet`.
+
+🔵 **Example: Fast HashMap Lookups**
+```java
+String s1 = "key";
+System.out.println(s1.hashCode()); // Hashcode is computed once and reused
+
+HashMap<String, Integer> map = new HashMap<>();
+map.put(s1, 100);
+
+System.out.println(map.get("key")); // Quick lookup using cached hashcode
+```
+🚀 **Advantage:** Faster retrieval in collections due to cached hashcode.
+
+---
+
+## **5. Predictability – Used in Keys and Identifiers**
+Since `String` is used in:
+- **Database queries**
+- **File paths**
+- **Network connections**
+- **Class loading mechanisms**
+
+Having **immutable strings** ensures **reliability** in these operations.
+
+🔵 **Example: Immutable String in Database Query**
+```java
+String query = "SELECT * FROM users WHERE id = ";
+query += "101"; // Creates a new object, original query is unchanged
+
+executeQuery(query);
+```
+🚀 **Benefit:** Prevents accidental modifications to queries and file paths.
+
+---
+
+## **Conclusion**
+| **Benefit** | **Why It Matters?** |
+|------------|--------------------|
+| **Security** | Prevents modification of sensitive data (passwords, file paths). |
+| **String Pool** | Saves memory by reusing strings instead of creating new ones. |
+| **Thread Safety** | No synchronization needed, making strings safe for multi-threading. |
+| **Performance** | Caches `hashCode()`, speeding up lookups in `HashMap` and `HashSet`. |
+| **Reliability** | Ensures stability in APIs, database queries, and network paths. |
+
+### **Final Takeaway**
+🚀 **Strings are immutable to enhance security, efficiency, and performance.**  
+🚀 **Use `StringBuilder` when you need mutable strings.**  
+
+Would you like an example of when to use `StringBuilder` instead of `String`? 😊
+
+# **How does Java handle memory leaks despite having garbage collection?**
+### **How Does Java Handle Memory Leaks Despite Having Garbage Collection?**  
+
+Even though Java has an **automatic Garbage Collector (GC)**, **memory leaks** can still occur. Java minimizes memory leaks using **garbage collection mechanisms**, but developers must write code carefully to avoid unintentional memory retention.
+
+---
+
+## **1. What is a Memory Leak in Java?**  
+A **memory leak** occurs when objects are **no longer needed** but **are still referenced**, preventing GC from reclaiming their memory.
+
+💡 **Garbage Collection only removes objects that are unreachable.** If an object **remains reachable but is never used again**, it **stays in memory**, leading to a **memory leak**.
+
+---
+
+## **2. How Java Prevents Memory Leaks Using Garbage Collection**
+### ✅ **Automatic Garbage Collection (GC)**
+Java uses **GC algorithms** (like Mark-and-Sweep, Generational GC) to automatically free up memory.
+
+#### **How GC Works?**
+1. **Marks** objects that are still referenced.
+2. **Sweeps** (removes) objects that are unreachable.
+3. **Compacts** memory to avoid fragmentation.
+
+---
+
+## **3. How Memory Leaks Still Occur in Java?**
+Even with **Garbage Collection**, memory leaks happen when objects are **unintentionally held in memory**. Here are the **common causes**:
+
+### **🔴 1. Static Collections Holding References (e.g., `ArrayList`, `HashMap`)**
+- Objects stored in **static collections** remain in memory **for the lifetime of the application**.
+
+#### **Example: Memory Leak with a Static List**
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+class MemoryLeakExample {
+    private static final List<String> cache = new ArrayList<>();
+
+    public static void addToCache(String data) {
+        cache.add(data); // Objects remain in memory indefinitely
+    }
+}
+```
+✅ **Fix:** Remove objects when they are no longer needed:
+```java
+cache.clear();
+```
+OR use **WeakHashMap** (which allows GC to remove unused keys).
+
+---
+
+### **🔴 2. Unclosed Resources (File Streams, Database Connections)**
+If **resources like files or database connections are not closed**, they stay in memory.
+
+#### **Example: Memory Leak with Unclosed Stream**
+```java
+import java.io.*;
+
+public class FileLeak {
+    public static void readFile() throws IOException {
+        FileInputStream fis = new FileInputStream("data.txt");
+        BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+        // Forgot to close the stream, causing a leak!
+    }
+}
+```
+✅ **Fix:** Use **try-with-resources** to automatically close resources:
+```java
+try (BufferedReader br = new BufferedReader(new FileReader("data.txt"))) {
+    System.out.println(br.readLine());
+}
+```
+
+---
+
+### **🔴 3. Inner Classes Holding Outer Class References**
+If a **non-static inner class** holds a reference to an **outer class**, it prevents the outer class from being garbage collected.
+
+#### **Example: Memory Leak in Inner Class**
+```java
+class Outer {
+    class Inner {
+        void display() {
+            System.out.println("Inner class");
+        }
+    }
+}
+```
+✅ **Fix:** Use **static nested classes**:
+```java
+class Outer {
+    static class Inner {
+        void display() {
+            System.out.println("Static inner class");
+        }
+    }
+}
+```
+
+---
+
+### **🔴 4. Registering Unused Listeners in GUI Applications**
+If event listeners are not unregistered, they **keep objects in memory**, even after they are no longer needed.
+
+#### **Example: Memory Leak with Event Listeners**
+```java
+import java.awt.*;
+import java.awt.event.*;
+
+class MemoryLeakGUI {
+    private Frame frame;
+
+    public void createGUI() {
+        frame = new Frame("Memory Leak");
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                System.out.println("Closing");
+            }
+        });
+    }
+}
+```
+✅ **Fix:** Remove listeners when no longer needed:
+```java
+frame.removeWindowListener(windowListener);
+```
+
+---
+
+### **🔴 5. ThreadLocal Objects Holding References**
+A **`ThreadLocal`** object can **retain references** even after a thread completes execution.
+
+#### **Example: Memory Leak with ThreadLocal**
+```java
+class ThreadLocalLeak {
+    private static final ThreadLocal<String> threadLocal = new ThreadLocal<>();
+
+    public static void setValue(String value) {
+        threadLocal.set(value);
+    }
+}
+```
+✅ **Fix:** Call `remove()` explicitly:
+```java
+threadLocal.remove();
+```
+
+---
+
+## **4. How to Detect and Fix Memory Leaks?**
+### ✅ **Using Java Profilers**
+Use tools like:
+- **VisualVM**
+- **JProfiler**
+- **Eclipse MAT (Memory Analyzer Tool)**
+
+### ✅ **Enable GC Logs for Analysis**
+Run your application with:
+```
+-XX:+PrintGCDetails -XX:+PrintGCTimeStamps
+```
+### ✅ **Use Weak References**
+Use **`WeakReference`** or **`WeakHashMap`** to allow GC to collect unused objects.
+
+---
+
+## **5. Summary**
+| **Cause of Memory Leak** | **Fix** |
+|------------------------|------------------|
+| **Static collections (e.g., List, Map) hold references** | Use `WeakHashMap`, clear lists when done |
+| **Unclosed resources (files, DB connections)** | Use `try-with-resources` |
+| **Inner classes holding outer class references** | Use **static inner classes** |
+| **Event listeners not unregistered** | Remove listeners when no longer needed |
+| **ThreadLocal variables not cleared** | Call `ThreadLocal.remove()` |
+
+---
+
+## **Final Takeaway**
+🚀 **Java's Garbage Collector helps, but memory leaks still happen if references are not handled properly.**  
+✅ Follow **best practices** like closing resources, using weak references, and profiling memory usage.  
+
+Would you like help detecting leaks in your application? 😊
+
+
