@@ -1851,4 +1851,152 @@ public class ComparatorExample {
 - ✅ **Use `Comparable` when a single, natural ordering is required (e.g., sorting by ID).**
 - ✅ **Use `Comparator` when multiple sorting options are needed (e.g., sorting by Name, Age, Salary).**
 
-Would you like to see more real-world examples or performance considerations? 🚀
+# **⚡ Explain Equals and HashCode Contract in Java**  
+
+In Java, **`equals()`** and **`hashCode()`** methods are used for object comparison and hashing-based collections (like `HashMap`, `HashSet`, and `HashTable`). These methods must follow a strict **contract** to ensure correctness.  
+
+---
+
+## **🔹 The Contract Between `equals()` and `hashCode()`**  
+### ✅ **1. If two objects are equal according to `equals()`, then their `hashCode()` must be the same.**
+- If `obj1.equals(obj2) == true`, then `obj1.hashCode() == obj2.hashCode()`.  
+- This ensures that equal objects will be stored in the same hash bucket in `HashMap` or `HashSet`.
+
+### ❌ **2. If two objects have the same `hashCode()`, they are NOT necessarily equal.**  
+- Different objects **can** have the same hash code due to **hash collisions**.  
+- Example: `"FB".hashCode() == "Ea".hashCode()` (both return **2236**, but they are different Strings).  
+
+### ✅ **3. If `equals()` is overridden, `hashCode()` must also be overridden.**
+- If not, objects may behave incorrectly in hash-based collections.
+
+### ✅ **4. The `hashCode()` method should consistently return the same value for the same object (unless modified).**
+- Example: If you call `hashCode()` on an object multiple times, it should return the same value, **as long as the object’s fields haven’t changed**.
+
+---
+
+## **🔹 Implementation Example**
+### **✅ Example of Proper `equals()` and `hashCode()` Implementation**
+```java
+import java.util.Objects;
+
+class Employee {
+    int id;
+    String name;
+
+    Employee(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    // Overriding equals() method
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Employee employee = (Employee) obj;
+        return id == employee.id && Objects.equals(name, employee.name);
+    }
+
+    // Overriding hashCode() method
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
+}
+
+public class EqualsHashCodeExample {
+    public static void main(String[] args) {
+        Employee e1 = new Employee(1, "Alice");
+        Employee e2 = new Employee(1, "Alice");
+
+        System.out.println(e1.equals(e2)); // ✅ true
+        System.out.println(e1.hashCode() == e2.hashCode()); // ✅ true
+
+        // Using in a HashSet
+        java.util.HashSet<Employee> set = new java.util.HashSet<>();
+        set.add(e1);
+        set.add(e2);
+        System.out.println(set.size()); // ✅ 1 (as both objects are considered equal)
+    }
+}
+```
+### **📝 Output:**
+```
+true
+true
+1
+```
+✅ **Since `equals()` and `hashCode()` are properly implemented, duplicate objects are not stored in `HashSet`.**
+
+---
+
+## **🔹 What Happens If `hashCode()` is Not Overridden?**
+If `hashCode()` is not overridden, objects that are logically equal (`equals() == true`) might have different hash codes, leading to incorrect behavior in hash-based collections.
+
+### **Example: Wrong Implementation (Only `equals()` Overridden)**
+```java
+class Employee {
+    int id;
+    String name;
+
+    Employee(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Employee employee = (Employee) obj;
+        return id == employee.id && Objects.equals(name, employee.name);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Employee e1 = new Employee(1, "Alice");
+        Employee e2 = new Employee(1, "Alice");
+
+        java.util.HashSet<Employee> set = new java.util.HashSet<>();
+        set.add(e1);
+        set.add(e2);
+        
+        System.out.println(set.size()); // ❌ 2 (instead of 1)
+    }
+}
+```
+### **📝 Output:**
+```
+2
+```
+**🔴 Problem:** Even though `e1.equals(e2)` is `true`, `HashSet` considers them different because they have different hash codes.
+
+---
+
+## **🔹 Best Practices for `equals()` and `hashCode()`**
+1. **Always override both together** to maintain consistency.
+2. **Use `Objects.hash()`** in `hashCode()` for cleaner code.
+3. **Avoid using mutable fields** in `hashCode()` to prevent inconsistency.
+4. **Use `instanceof` carefully** inside `equals()` to support inheritance.
+
+---
+
+## **🔹 Summary Table**
+| Feature | `equals()` | `hashCode()` |
+|---------|-----------|-------------|
+| Purpose | Compares object **contents** | Returns a **hash value** for an object |
+| Must Override? | ✅ Yes, for custom object comparison | ✅ Yes, if `equals()` is overridden |
+| Contract with Each Other | If `equals()` is `true`, then `hashCode()` **must be the same** | Two equal objects must have the same hash code |
+| Used In | `HashSet`, `HashMap`, `ArrayList.contains()` | `HashSet`, `HashMap` (bucket placement) |
+| Default Behavior (From `Object`) | Uses memory reference comparison (`==`) | Generates different hash codes for different objects |
+
+---
+
+## **🔹 Final Takeaway**
+- Always **override `equals()` and `hashCode()` together**.
+- Follow the **contract** to avoid issues in hash-based collections.
+- Use **`Objects.hash()`** for simplicity in `hashCode()`.
+- Never use **mutable fields** in `hashCode()`.
+
+Would you like more examples or a deep dive into hashing in Java? 🚀
