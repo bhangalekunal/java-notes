@@ -2069,3 +2069,878 @@ attempting to assign weaker access privileges; was public
 - **Can** increase access (e.g., `protected` → `public`).
 - **`private` methods** cannot be overridden (they are not inherited).
 - Java enforces these rules to ensure that overridden methods **do not break encapsulation** or **reduce access unexpectedly**.
+
+# **Can a Constructor be `final`, `static`, or `synchronized` in Java? Why or Why Not?**
+
+#### **1. Can a Constructor be `final`?**
+**No, a constructor cannot be `final` in Java.**  
+
+##### **Reason:**
+- The purpose of the `final` keyword is to **prevent method overriding** in subclasses.
+- However, **constructors are not inherited**, so there is no concept of overriding them.
+- Since overriding does not apply to constructors, making them `final` has no meaning and is **not allowed**.
+
+##### **Example (Compilation Error)**:
+```java
+class Test {
+    final Test() { // ❌ Compilation error
+        System.out.println("Constructor");
+    }
+}
+```
+
+---
+
+#### **2. Can a Constructor be `static`?**
+**No, a constructor cannot be `static` in Java.**  
+
+##### **Reason:**
+- `static` means that a method or variable belongs to the **class rather than an instance**.
+- A constructor is responsible for **creating an instance of a class**, which contradicts the purpose of `static`.
+- If a constructor were `static`, it would mean that it belongs to the class itself, but constructors are only called when creating instances.
+
+##### **Alternative:**  
+If you need a **static-like constructor behavior**, you can use a **static factory method**:
+```java
+class Test {
+    private Test() { // Private constructor
+        System.out.println("Private Constructor");
+    }
+    
+    public static Test createInstance() { // Static factory method
+        return new Test();
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Test obj = Test.createInstance(); // Correct way to "mimic" static constructor
+    }
+}
+```
+
+---
+
+#### **3. Can a Constructor be `synchronized`?**
+**No, a constructor cannot be `synchronized` in Java.**  
+
+##### **Reason:**
+- The purpose of `synchronized` is to control **concurrent access** to shared resources (mainly instance methods and blocks).
+- A constructor is only used **during object creation**, and each thread calling `new ClassName()` gets a **completely new instance**.
+- There is **no shared resource** to synchronize, so Java does not allow a `synchronized` constructor.
+
+##### **Alternative:**  
+If you need to **synchronize object creation**, you can synchronize the instance inside a **static factory method**:
+```java
+class Test {
+    private static Test instance;
+
+    private Test() { 
+        System.out.println("Constructor called");
+    }
+
+    public static synchronized Test getInstance() { // Synchronizing instance creation
+        if (instance == null) {
+            instance = new Test();
+        }
+        return instance;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Test obj1 = Test.getInstance();
+        Test obj2 = Test.getInstance();
+    }
+}
+```
+💡 This pattern is commonly used in **Singleton Design Pattern**.
+
+---
+
+### **Final Answer:**
+🚫 **A constructor cannot be `final`, `static`, or `synchronized` in Java** because:
+- `final` does not apply (constructors are not inherited).
+- `static` contradicts instance creation.
+- `synchronized` is unnecessary (each constructor call creates a separate instance).  
+
+✅ However, **workarounds exist**, like using **static factory methods** for `static`-like behavior and **synchronized methods** for controlled instance creation.
+
+# **Why Doesn’t Java Support Operator Overloading Like C++?**
+
+Java **does not support operator overloading** like C++ because of **simplicity, readability, and maintainability**. Below are the key reasons why operator overloading is **intentionally omitted** from Java.
+
+---
+
+### **1. To Keep Java Simple & Readable**
+One of Java’s main design goals was to **avoid complexity**.  
+- In **C++**, operator overloading can make code **hard to understand** because the meaning of operators can change based on how they are overloaded.  
+- In **Java**, an operator always has a **single, well-defined behavior**, making the code more predictable.
+
+✅ **Example of confusion in C++**:
+```cpp
+class Complex {
+public:
+    int real, imag;
+    Complex(int r, int i) : real(r), imag(i) {}
+
+    // Overloaded `+` operator
+    Complex operator+(Complex const &obj) {
+        return Complex(real + obj.real, imag + obj.imag);
+    }
+};
+
+int main() {
+    Complex c1(3, 4), c2(5, 6);
+    Complex c3 = c1 + c2;  // `+` works differently than primitive addition!
+}
+```
+- The `+` operator works for both **integers and Complex numbers**, but its behavior changes, which can be **confusing**.
+
+🚫 In Java, **all operators work consistently**, making the code easier to read and maintain.
+
+---
+
+### **2. To Avoid Unexpected Bugs & Misuse**
+- In **C++**, developers can overload operators in **unexpected ways**, leading to **confusing and hard-to-debug issues**.
+- Java's **designers deliberately avoided** operator overloading to **reduce unexpected behavior**.
+
+✅ **Example of misuse in C++**:
+```cpp
+class Test {
+public:
+    bool operator==(const Test &other) {
+        return true;  // Always returns true (BAD PRACTICE!)
+    }
+};
+```
+- The `==` operator **should compare object equality**, but an overloaded version might **always return true**, leading to incorrect results.
+
+🚫 **Java prevents this issue** by enforcing `equals()` and `hashCode()` instead of allowing `==` to be overloaded.
+
+---
+
+### **3. Ensuring Consistent Performance**
+- In **C++**, overloaded operators can sometimes be **less efficient** than built-in operators.
+- Since Java is designed with **runtime efficiency** in mind, operator overloading was **removed** to avoid unnecessary performance issues.
+
+---
+
+### **4. Java Encourages Method-Based Approach Instead**
+Instead of **operator overloading**, Java encourages **explicit methods** like `add()`, `compareTo()`, and `equals()`, making the operations more **readable**.
+
+✅ **Java alternative for C++ operator overloading**:
+```java
+class Complex {
+    int real, imag;
+
+    public Complex(int r, int i) {
+        this.real = r;
+        this.imag = i;
+    }
+
+    public Complex add(Complex c) {  // Instead of overloading `+`
+        return new Complex(this.real + c.real, this.imag + c.imag);
+    }
+
+    public String toString() {
+        return real + " + " + imag + "i";
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Complex c1 = new Complex(3, 4);
+        Complex c2 = new Complex(5, 6);
+        Complex c3 = c1.add(c2);  // Explicit method instead of `+`
+        System.out.println(c3);   // Output: 8 + 10i
+    }
+}
+```
+🚀 **Benefits**:
+- The method `add()` makes the intention **clear**.
+- No confusion about how `+` should work.
+- Better readability and maintainability.
+
+---
+
+### **5. Java Has Limited Operator Overloading for Strings**
+Although **Java does not support full operator overloading**, it **partially supports** it for **string concatenation (`+`)**:
+```java
+String s = "Hello" + " World"; // Allowed in Java
+```
+However, this is a special case implemented at the compiler level, **not actual operator overloading**.
+
+---
+
+### **Conclusion**
+🚫 **Java does not support operator overloading** because:
+1. **Simplicity & Readability** – Prevents confusing operator behavior.  
+2. **Avoids Bugs & Misuse** – Eliminates unexpected results from overloaded operators.  
+3. **Ensures Consistent Performance** – Avoids inefficient implementations.  
+4. **Encourages Explicit Methods** – Uses methods like `add()`, `equals()`, `compareTo()` instead of overloading.  
+5. **Limited Support for String Concatenation** – Java only allows `+` for `String` types as a special case.  
+
+✅ Instead of operator overloading, Java provides **well-defined methods**, making the language more **maintainable and predictable**! 🚀
+
+# **Does Extending `Object` Class Imply Multiple Inheritance in Java?**  
+
+No, **Java does not support multiple inheritance of classes**, even though every class in Java extends `Object` and can also extend another class. The key reason is **single class inheritance** and the way Java’s inheritance model works.
+
+---
+
+### **Understanding Inheritance in Java**
+1. **Every class in Java implicitly extends `Object` (except `Object` itself).**  
+2. **Java supports single inheritance**, meaning a class can only extend **one other class** explicitly.  
+3. Since Java does **not** allow extending multiple classes, **multiple inheritance of classes is not applicable**.
+
+---
+
+### **Why This is Not Multiple Inheritance?**
+#### **1️⃣ `Object` is the Root of All Classes**
+Even if a class extends another class, it **still indirectly extends `Object`**.  
+✅ Example:
+```java
+class A {
+    void show() {
+        System.out.println("A");
+    }
+}
+
+class B extends A {
+    void display() {
+        System.out.println("B");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        B obj = new B();
+        obj.show();   // Inherited from A
+        obj.display(); // Defined in B
+    }
+}
+```
+- Here, `B` extends `A`, but **both `A` and `B` still extend `Object` implicitly**.
+- However, **B only directly inherits from A**, not from multiple classes.
+
+---
+
+#### **2️⃣ Java Uses a Single Inheritance Model**
+Unlike C++, Java does **not** allow a class to extend multiple classes.  
+🚫 **Example (Not Allowed in Java)**:
+```java
+class A {}
+class B {}
+
+// ERROR: Cannot extend multiple classes
+class C extends A, B {}  
+```
+- Java does **not** allow a class to inherit from both `A` and `B`.
+
+---
+
+#### **3️⃣ Object Methods Are Inherited, Not Multiple Classes**
+When a class extends another class, it **inherits only from that class**, and all classes eventually inherit from `Object`.  
+✅ **Example with `toString()` method from `Object`**:
+```java
+class A {
+    void show() {
+        System.out.println("Class A");
+    }
+}
+
+class B extends A {
+    @Override
+    public String toString() {  // Overriding from Object
+        return "Class B";
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        B obj = new B();
+        System.out.println(obj.toString());  // Uses Object's toString()
+    }
+}
+```
+- Here, `B` **only extends `A`**, but it **still gets `Object` methods like `toString()`**.
+- This does **not** mean Java supports **multiple inheritance**.
+
+---
+
+### **How Java Handles the Problem of Multiple Inheritance?**
+Java **avoids multiple inheritance of classes** to prevent ambiguity but provides:  
+1. **Interfaces with default methods** to allow multiple inheritance of behavior.
+2. **Composition (Has-A relationship)** as an alternative to multiple inheritance.
+
+✅ **Example Using Interfaces (Allowed in Java)**:
+```java
+interface X {
+    void methodX();
+}
+
+interface Y {
+    void methodY();
+}
+
+class A implements X, Y {  // Allowed in Java
+    public void methodX() {
+        System.out.println("X method");
+    }
+
+    public void methodY() {
+        System.out.println("Y method");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        A obj = new A();
+        obj.methodX();
+        obj.methodY();
+    }
+}
+```
+- **Multiple inheritance of behavior is possible via interfaces**.
+- **Multiple inheritance of classes is NOT possible**.
+
+---
+
+### **Conclusion**
+❌ **Java does not support multiple inheritance of classes**.  
+✅ Every class **implicitly** extends `Object`, but a class can **only extend one other class explicitly**.  
+✅ **Java solves multiple inheritance issues using interfaces and composition** instead.  
+
+Thus, **Java’s inheritance model ensures simplicity, avoids ambiguity, and maintains code clarity**. 🚀
+
+# **Why is Multiple Inheritance Not Allowed in Java, but Interfaces Can Have Multiple Inheritance?**  
+
+Java does **not** support multiple inheritance of classes, but it **allows multiple inheritance of interfaces**. This is mainly to avoid **ambiguity problems** while still allowing code reusability. Let's break this down in detail.
+
+---
+
+## **1️⃣ Why Multiple Inheritance of Classes is Not Allowed?**  
+
+### **❌ Diamond Problem (Ambiguity Issue)**
+If a class could inherit from multiple classes, it could lead to **method ambiguity** when both parent classes have the same method.
+
+🚫 **Example (If Java Allowed Multiple Inheritance)**:
+```java
+class A {
+    void show() {
+        System.out.println("A");
+    }
+}
+
+class B {
+    void show() {
+        System.out.println("B");
+    }
+}
+
+// ERROR: Java does not allow multiple class inheritance
+class C extends A, B { 
+    // Which show() method should C inherit? A's or B's?
+}
+
+public class Main {
+    public static void main(String[] args) {
+        C obj = new C();
+        obj.show();  // Ambiguity: A's or B's method?
+    }
+}
+```
+❌ **Problem:** Java wouldn’t know whether to use `A.show()` or `B.show()`, causing confusion.  
+✅ **Solution in Java:** Java **only allows single class inheritance** to prevent this.
+
+---
+
+### **❌ Complexity and Maintenance Issues**
+- If multiple classes were inherited, resolving dependencies and maintaining the **class hierarchy** would become complex.
+- Changes in one parent class could **break the entire hierarchy**, making debugging harder.
+- Java prioritizes **code simplicity and readability**, so it restricts multiple class inheritance.
+
+---
+
+## **2️⃣ Why is Multiple Inheritance Allowed for Interfaces?**
+Java **allows multiple inheritance of interfaces** because interfaces **only define method signatures (without implementation, before Java 8)**. This avoids the ambiguity that arises in **multiple class inheritance**.
+
+✅ **Example of Multiple Interface Inheritance**:
+```java
+interface X {
+    void methodX();
+}
+
+interface Y {
+    void methodY();
+}
+
+// Class A implements both interfaces
+class A implements X, Y {
+    public void methodX() {
+        System.out.println("X method");
+    }
+
+    public void methodY() {
+        System.out.println("Y method");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        A obj = new A();
+        obj.methodX();  // No ambiguity
+        obj.methodY();
+    }
+}
+```
+👉 **Why does this work?**
+- `X` and `Y` only **define method contracts**, not implementations.
+- `A` **provides its own implementation**, so there's **no ambiguity**.
+
+---
+
+### **3️⃣ What About Default Methods in Interfaces (Java 8)?**
+Before Java 8, interfaces **only contained abstract methods**, avoiding implementation conflicts.  
+But in **Java 8**, interfaces introduced **default methods**, which **can have implementations**.  
+
+💡 **How does Java solve ambiguity in default methods?**
+If two interfaces **have the same default method**, the implementing class **must override it**.
+
+✅ **Example (Java 8 Default Methods with Conflict Resolution)**:
+```java
+interface A {
+    default void show() {
+        System.out.println("A's show method");
+    }
+}
+
+interface B {
+    default void show() {
+        System.out.println("B's show method");
+    }
+}
+
+// Class C implements both interfaces
+class C implements A, B {
+    // Resolving ambiguity
+    public void show() {
+        System.out.println("C's own show method");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        C obj = new C();
+        obj.show();  // C's method overrides default methods from interfaces
+    }
+}
+```
+👉 **Java forces you to override conflicting default methods** to avoid ambiguity.
+
+---
+
+## **🔹 Summary**
+| Feature | Multiple Inheritance of Classes | Multiple Inheritance of Interfaces |
+|---------|---------------------------------|-----------------------------------|
+| **Allowed?** | ❌ Not Allowed | ✅ Allowed |
+| **Reason** | Avoids **ambiguity (diamond problem)** and **complexity** | Interfaces only provide **method signatures** (before Java 8) |
+| **Conflicts?** | Causes confusion when two parent classes have the same method | Java **forces the child class to override** conflicting default methods (Java 8+) |
+| **Solution?** | Use **composition** (`Has-A` relationship) | Use **interfaces** with multiple inheritance |
+
+---
+
+## **🚀 Conclusion**
+- **Java restricts multiple class inheritance** to avoid **ambiguity and complexity**.  
+- **Interfaces allow multiple inheritance** because they only define method contracts.  
+- **With Java 8 default methods, Java enforces conflict resolution** by requiring explicit overrides.  
+
+👉 **Java’s approach ensures code clarity, maintainability, and flexibility without the drawbacks of multiple class inheritance!** 🚀
+
+
+# **Can We Override a Static Method in Java?**  
+
+No, **we cannot override static methods in Java**. However, we **can redefine them in a subclass**, which is known as **method hiding**, not overriding.  
+
+---
+
+## **🔹 Why Can't Static Methods Be Overridden?**
+1. **Static methods belong to the class, not to an instance**.
+   - Method overriding in Java is based on **runtime polymorphism (dynamic method dispatch)**, which requires an object instance.
+   - Since static methods are associated with the **class**, they don’t participate in dynamic method dispatch.
+  
+2. **Static methods are resolved at compile-time**.
+   - Unlike instance methods, which are resolved at **runtime** based on the actual object type, static methods are resolved **at compile-time** based on the reference type.
+
+---
+
+## **🔹 What Happens When We "Override" a Static Method? (Method Hiding)**
+If a subclass defines a static method with the **same signature** as a static method in the parent class, the **parent method is hidden, not overridden**.
+
+✅ **Example of Method Hiding:**
+```java
+class Parent {
+    static void show() {
+        System.out.println("Static method in Parent");
+    }
+}
+
+class Child extends Parent {
+    static void show() {  // This hides the Parent's show() method, not overrides it
+        System.out.println("Static method in Child");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Parent p = new Child();
+        p.show();  // Output: "Static method in Parent" (Method hiding, not overriding)
+
+        Child c = new Child();
+        c.show();  // Output: "Static method in Child"
+    }
+}
+```
+🔍 **Explanation:**
+- `p.show();` calls `Parent`'s `show()` because **static methods are bound at compile-time**.
+- `c.show();` calls `Child`'s `show()` because `c` is explicitly of type `Child`.
+
+---
+
+## **🔹 Key Differences: Method Overriding vs. Method Hiding**
+| Feature | Method Overriding | Method Hiding |
+|---------|-----------------|--------------|
+| **Method Type** | Instance method | Static method |
+| **Resolution Time** | Runtime (dynamic binding) | Compile-time (static binding) |
+| **Inheritance Behavior** | Child method **replaces** the parent method | Child method **hides** the parent method |
+| **Reference Behavior** | Based on actual object type | Based on reference type |
+
+---
+
+## **🔹 What If We Remove `static` from One of the Methods?**
+If the method in the parent class is **static**, but the method in the child class is **non-static**, or vice versa, Java will throw a **compilation error**.
+
+❌ **Invalid Example:**
+```java
+class Parent {
+    static void show() {  // Static method in Parent
+        System.out.println("Parent's static method");
+    }
+}
+
+class Child extends Parent {
+    void show() {  // ERROR: Cannot override static method as non-static
+        System.out.println("Child's instance method");
+    }
+}
+```
+🔴 **Compilation Error:**  
+`show() in Child cannot override show() in Parent; overridden method is static`
+
+---
+
+## **🔹 Can We Call a Static Method Using an Object?**
+Yes, but it's **not recommended** since static methods belong to a class, not an object.
+
+✅ **Example:**
+```java
+class Example {
+    static void display() {
+        System.out.println("Static method called");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Example obj = new Example();
+        obj.display();  // Works but gives a warning: should be called as Example.display()
+    }
+}
+```
+✔ **Better Way:** `Example.display();` (Call directly on the class)
+
+---
+
+## **🚀 Conclusion**
+- **Static methods cannot be overridden**; they can only be **hidden** in subclasses.
+- Method hiding follows **compile-time binding**, whereas method overriding follows **runtime polymorphism**.
+- Calling a static method on an instance **works but is not recommended**.
+
+📌 **Best Practice:** Always call static methods using the **class name**, not an object. 🚀
+
+# **What Happens If a Class Implements Two Interfaces with the Same Default Method in Java?**  
+
+If a class implements **two interfaces** that have the **same default method**, Java will throw a **compilation error** due to ambiguity. The compiler won’t know which method to call.  
+
+---
+
+### **🔹 Example of Conflict**
+```java
+interface InterfaceA {
+    default void show() {
+        System.out.println("InterfaceA's show method");
+    }
+}
+
+interface InterfaceB {
+    default void show() {
+        System.out.println("InterfaceB's show method");
+    }
+}
+
+class MyClass implements InterfaceA, InterfaceB {
+    public static void main(String[] args) {
+        MyClass obj = new MyClass();
+        obj.show();  // Compilation error: show() is ambiguous
+    }
+}
+```
+🔴 **Compilation Error:**  
+`class MyClass inherits unrelated defaults for show() from types InterfaceA and InterfaceB`
+
+---
+
+### **🔹 How to Resolve the Conflict?**
+There are **two ways** to resolve this issue:
+
+### **1️⃣ Override the Default Method in the Class**
+You can **override** the conflicting method in your class and provide your own implementation.
+```java
+class MyClass implements InterfaceA, InterfaceB {
+    @Override
+    public void show() {  // Resolving the conflict by overriding
+        System.out.println("Overridden method in MyClass");
+    }
+
+    public static void main(String[] args) {
+        MyClass obj = new MyClass();
+        obj.show();  // Output: Overridden method in MyClass
+    }
+}
+```
+✔ **This approach ensures clarity** and allows you to define custom behavior.
+
+---
+
+### **2️⃣ Specify Which Interface's Method to Use**
+If you want to use a specific interface’s default method, you can **explicitly call it using `InterfaceName.super.methodName()`**.
+
+```java
+class MyClass implements InterfaceA, InterfaceB {
+    @Override
+    public void show() {
+        InterfaceA.super.show();  // Explicitly calling InterfaceA's method
+    }
+
+    public static void main(String[] args) {
+        MyClass obj = new MyClass();
+        obj.show();  // Output: InterfaceA's show method
+    }
+}
+```
+✔ **This approach allows you to select a specific implementation from an interface.**
+
+---
+
+### **🔹 Key Takeaways**
+1. **Java does not support multiple inheritance for classes** but allows it for interfaces.
+2. If two interfaces provide the **same default method**, a class implementing both **must resolve the conflict** by:
+   - **Overriding the method** or
+   - **Explicitly calling a specific interface's method** using `InterfaceName.super.methodName()`.
+3. This mechanism ensures **better control and avoids ambiguity** while supporting multiple inheritance for behavior (interfaces).
+
+🚀 **Best Practice:** Always resolve conflicts explicitly to make the code readable and maintainable.
+
+# **What is method hiding, and how does it differ from method overriding?**
+### **Method Hiding vs. Method Overriding in Java**  
+
+Method **hiding** and **overriding** both involve redefining methods in a subclass, but they behave differently based on whether the method is **static** or **non-static**.
+
+---
+
+## **🔹 Method Overriding (For Instance Methods)**
+**Overriding** occurs when a **subclass provides a new implementation** for a **non-static (instance) method** that is already defined in the **superclass**.
+
+### **Key Characteristics of Overriding**
+✔ The method must have the **same name, return type, and parameters** as in the superclass.  
+✔ The method **cannot have a more restrictive access modifier** than the overridden method.  
+✔ The method in the subclass **is dynamically bound (runtime polymorphism).**  
+
+### **Example of Overriding**
+```java
+class Parent {
+    void show() { // Instance method
+        System.out.println("Parent's show()");
+    }
+}
+
+class Child extends Parent {
+    @Override
+    void show() {
+        System.out.println("Child's show()");
+    }
+
+    public static void main(String[] args) {
+        Parent obj = new Child(); // Upcasting
+        obj.show();  // Output: Child's show() (Dynamic method dispatch)
+    }
+}
+```
+✅ **Method calls are resolved at runtime (dynamic binding).**  
+✅ **Method execution is determined by the actual object type (Child), not the reference type (Parent).**
+
+---
+
+## **🔹 Method Hiding (For Static Methods)**
+**Method hiding** happens when a **subclass defines a static method** with the **same signature** as a static method in the **superclass**. Instead of overriding, the subclass **hides** the superclass method.
+
+### **Key Characteristics of Method Hiding**
+✔ The method in the superclass must be **static**.  
+✔ The method in the subclass must also be **static**.  
+✔ Method hiding does **not support runtime polymorphism** (static binding instead).  
+
+### **Example of Method Hiding**
+```java
+class Parent {
+    static void show() { // Static method
+        System.out.println("Parent's static show()");
+    }
+}
+
+class Child extends Parent {
+    static void show() { // Hiding Parent's static method
+        System.out.println("Child's static show()");
+    }
+
+    public static void main(String[] args) {
+        Parent obj = new Child();
+        obj.show();  // Output: Parent's static show() (Static binding)
+
+        Child.show(); // Output: Child's static show()
+    }
+}
+```
+❌ **Unlike overriding, method calls are resolved at compile time (static binding).**  
+❌ **The method executed is determined by the reference type, not the object type.**
+
+---
+
+## **🔹 Key Differences Between Method Hiding and Overriding**
+
+| Feature             | Method Overriding | Method Hiding |
+|--------------------|----------------|--------------|
+| **Method Type**    | Instance method (non-static) | Static method |
+| **Binding Type**   | Dynamic (Runtime Polymorphism) | Static (Compile-time) |
+| **Determined By**  | Object type (Actual instance) | Reference type |
+| **Access via Superclass Reference** | Calls overridden method in subclass | Calls superclass method |
+| **Use of `@Override` Annotation** | Allowed | Not applicable |
+
+---
+
+## **🔹 Conclusion**
+- **Overriding** is used to achieve **runtime polymorphism**, where a method in a subclass provides a new implementation of an instance method from a superclass.
+- **Method hiding** occurs when a **static method** in a subclass has the **same signature** as a static method in the superclass, but **it does not participate in polymorphism**.
+
+🚀 **Best Practice:** Avoid method hiding unless necessary, as it can lead to confusion in code behavior.
+
+# **Can an Interface Implement Another Interface in Java?**  
+**No, an interface cannot "implement" another interface in Java, but it can "extend" another interface.**  
+
+---
+
+## **🔹 Extending an Interface in Java**  
+In Java, one interface **can extend** another using the `extends` keyword.  
+- Unlike classes, interfaces can extend **multiple** interfaces (i.e., multiple inheritance is allowed for interfaces).  
+- A child interface **inherits all the abstract methods** and **default methods** from the parent interface.  
+
+---
+
+### **✅ Example: Interface Extending Another Interface**
+```java
+interface A {
+    void methodA();
+}
+
+interface B extends A {  // B extends A
+    void methodB();
+}
+
+class MyClass implements B {  // MyClass must implement both methodA() and methodB()
+    public void methodA() {
+        System.out.println("Method A implemented");
+    }
+
+    public void methodB() {
+        System.out.println("Method B implemented");
+    }
+
+    public static void main(String[] args) {
+        MyClass obj = new MyClass();
+        obj.methodA();  // Output: Method A implemented
+        obj.methodB();  // Output: Method B implemented
+    }
+}
+```
+✔ **`B` extends `A`**, so any class that implements `B` must implement all methods from `A` and `B`.  
+
+---
+
+## **🔹 Multiple Interface Inheritance (Extending Multiple Interfaces)**
+Java **allows multiple inheritance for interfaces**, meaning an interface can extend multiple interfaces.
+
+### **✅ Example: Multiple Interface Inheritance**
+```java
+interface A {
+    void methodA();
+}
+
+interface B {
+    void methodB();
+}
+
+interface C extends A, B {  // Multiple inheritance for interfaces
+    void methodC();
+}
+
+class MyClass implements C {  // Must implement all methods
+    public void methodA() {
+        System.out.println("Method A implemented");
+    }
+
+    public void methodB() {
+        System.out.println("Method B implemented");
+    }
+
+    public void methodC() {
+        System.out.println("Method C implemented");
+    }
+
+    public static void main(String[] args) {
+        MyClass obj = new MyClass();
+        obj.methodA();
+        obj.methodB();
+        obj.methodC();
+    }
+}
+```
+✔ **Interface `C` extends both `A` and `B`**, so `MyClass` must implement all methods from `A`, `B`, and `C`.
+
+---
+
+## **🔹 Key Differences: Extending vs. Implementing**
+| Feature                | Extending an Interface (`extends`) | Implementing an Interface (`implements`) |
+|------------------------|--------------------------------|--------------------------------|
+| **Used By**            | Interfaces                     | Classes                        |
+| **Keyword**            | `extends`                      | `implements`                   |
+| **Multiple Inheritance?** | ✅ Yes (can extend multiple interfaces) | ❌ No (class can implement multiple interfaces but cannot extend multiple classes) |
+| **Abstract Methods**   | Inherited in child interface   | Must be implemented in class |
+
+---
+
+## **🔹 Conclusion**
+✔ **An interface can extend another interface** (or multiple interfaces) using `extends`.  
+✔ **A class implements an interface** using `implements` and must define all inherited methods.  
+✔ **Multiple inheritance is allowed for interfaces** but not for classes.  
+
+🚀 **Best Practice:** Use interface extension to create flexible and reusable designs while keeping dependencies minimal.
