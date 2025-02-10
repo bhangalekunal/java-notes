@@ -1592,4 +1592,263 @@ public class PassByValueExample {
    - Modifying **object fields** affects the original object.
    - Reassigning a new object inside the method **does not** affect the original reference.
 
-Would you like an analogy to clarify this concept further? 🚀
+# **Why are Comparable and Comparator Interfaces Required in Java?**  
+
+In Java, the **`Comparable`** and **`Comparator`** interfaces are required to define **custom sorting** mechanisms for objects. Since Java does not inherently know how to compare complex objects like `Employee`, `Student`, or `Book`, these interfaces allow developers to specify sorting logic.
+
+---
+
+## **🔹 1. `Comparable` Interface (Natural Ordering)**
+- Used to define the **default sorting order** of objects.
+- It is implemented in the class whose objects need to be sorted.
+- Uses the **`compareTo(T obj)`** method.
+- Modifies the class itself.
+
+### **✅ Example of `Comparable`**
+```java
+import java.util.*;
+
+class Employee implements Comparable<Employee> {
+    int id;
+    String name;
+
+    Employee(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    // Sorting based on Employee ID (Natural Order)
+    @Override
+    public int compareTo(Employee other) {
+        return this.id - other.id; // Ascending order
+    }
+
+    @Override
+    public String toString() {
+        return id + " - " + name;
+    }
+}
+
+public class ComparableExample {
+    public static void main(String[] args) {
+        List<Employee> list = new ArrayList<>();
+        list.add(new Employee(3, "Alice"));
+        list.add(new Employee(1, "Bob"));
+        list.add(new Employee(2, "Charlie"));
+
+        Collections.sort(list); // Uses compareTo method
+
+        System.out.println(list);
+    }
+}
+```
+### **📝 Output:**
+```
+[1 - Bob, 2 - Charlie, 3 - Alice]
+```
+✅ **`Comparable` is useful when there's a single natural sorting order, like sorting employees by ID.**
+
+---
+
+## **🔹 2. `Comparator` Interface (Custom Sorting)**
+- Used when we need **multiple sorting options**.
+- Does **not** modify the original class.
+- Uses the **`compare(T obj1, T obj2)`** method.
+
+### **✅ Example of `Comparator`**
+```java
+import java.util.*;
+
+class Employee {
+    int id;
+    String name;
+
+    Employee(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return id + " - " + name;
+    }
+}
+
+// Comparator to sort employees by Name
+class NameComparator implements Comparator<Employee> {
+    @Override
+    public int compare(Employee e1, Employee e2) {
+        return e1.name.compareTo(e2.name);
+    }
+}
+
+public class ComparatorExample {
+    public static void main(String[] args) {
+        List<Employee> list = new ArrayList<>();
+        list.add(new Employee(3, "Alice"));
+        list.add(new Employee(1, "Bob"));
+        list.add(new Employee(2, "Charlie"));
+
+        // Sort by Name using Comparator
+        Collections.sort(list, new NameComparator());
+
+        System.out.println(list);
+    }
+}
+```
+### **📝 Output:**
+```
+[3 - Alice, 1 - Bob, 2 - Charlie]
+```
+✅ **`Comparator` is useful when multiple sorting criteria are needed, like sorting by Name instead of ID.**
+
+---
+
+## **🔹 When to Use `Comparable` vs `Comparator`?**
+| Feature           | `Comparable` | `Comparator` |
+|------------------|-------------|-------------|
+| Sorting Logic | Defined inside the class | Defined outside the class |
+| Number of Sorting Criteria | Only one (natural order) | Multiple sorting options |
+| Affects Class Structure? | Yes | No |
+| Method Used | `compareTo(T obj)` | `compare(T obj1, T obj2)` |
+| Example Usage | Sorting Employees by ID | Sorting Employees by Name, Age, etc. |
+
+---
+
+## **🔹 Key Takeaways**
+- `Comparable` → Used for **default sorting (natural order)**, modifies the class.
+- `Comparator` → Used for **custom sorting (multiple criteria)**, does **not** modify the class.
+- `Collections.sort()` or `TreeSet`, `TreeMap` use these interfaces for sorting.
+
+# **What are the Difference Between `Comparable` and `Comparator` in Java**  
+
+Both **`Comparable`** and **`Comparator`** interfaces are used to define sorting logic for objects in Java, but they have key differences.
+
+---
+
+## **🔹 1. Comparable Interface (`java.lang.Comparable<T>`)**
+- Used to define **natural sorting order**.
+- Implemented within the class itself.
+- Uses the **`compareTo(T obj)`** method.
+- **Modifies the original class**.
+
+### **✅ Example of `Comparable` (Sorting Employees by ID)**
+```java
+import java.util.*;
+
+class Employee implements Comparable<Employee> {
+    int id;
+    String name;
+
+    Employee(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    // Sorting based on Employee ID (Natural Order)
+    @Override
+    public int compareTo(Employee other) {
+        return this.id - other.id; // Ascending order
+    }
+
+    @Override
+    public String toString() {
+        return id + " - " + name;
+    }
+}
+
+public class ComparableExample {
+    public static void main(String[] args) {
+        List<Employee> list = new ArrayList<>();
+        list.add(new Employee(3, "Alice"));
+        list.add(new Employee(1, "Bob"));
+        list.add(new Employee(2, "Charlie"));
+
+        Collections.sort(list); // Uses compareTo method
+
+        System.out.println(list);
+    }
+}
+```
+### **📝 Output:**
+```
+[1 - Bob, 2 - Charlie, 3 - Alice]
+```
+✅ **Best for default sorting when a single ordering is needed (e.g., sorting Employees by ID).**
+
+---
+
+## **🔹 2. Comparator Interface (`java.util.Comparator<T>`)**
+- Used for **custom sorting logic**.
+- Implemented **outside** the class.
+- Uses the **`compare(T obj1, T obj2)`** method.
+- Does **not modify the original class**.
+
+### **✅ Example of `Comparator` (Sorting Employees by Name)**
+```java
+import java.util.*;
+
+class Employee {
+    int id;
+    String name;
+
+    Employee(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return id + " - " + name;
+    }
+}
+
+// Comparator to sort employees by Name
+class NameComparator implements Comparator<Employee> {
+    @Override
+    public int compare(Employee e1, Employee e2) {
+        return e1.name.compareTo(e2.name);
+    }
+}
+
+public class ComparatorExample {
+    public static void main(String[] args) {
+        List<Employee> list = new ArrayList<>();
+        list.add(new Employee(3, "Alice"));
+        list.add(new Employee(1, "Bob"));
+        list.add(new Employee(2, "Charlie"));
+
+        // Sort by Name using Comparator
+        Collections.sort(list, new NameComparator());
+
+        System.out.println(list);
+    }
+}
+```
+### **📝 Output:**
+```
+[3 - Alice, 1 - Bob, 2 - Charlie]
+```
+✅ **Useful when multiple sorting criteria are needed (e.g., sorting by Name instead of ID).**
+
+---
+
+## **🔹 Key Differences Between `Comparable` and `Comparator`**
+| Feature          | `Comparable` | `Comparator` |
+|-----------------|-------------|-------------|
+| Package | `java.lang` | `java.util` |
+| Purpose | Defines **natural sorting order** | Defines **custom sorting order** |
+| Implementation | Implemented **inside the class** | Implemented **outside the class** |
+| Method | `compareTo(T obj)` | `compare(T obj1, T obj2)` |
+| Modifies Class? | **Yes** (modifies the class) | **No** (keeps the class unchanged) |
+| Number of Sorting Criteria | Only **one** sorting logic | Can define **multiple** sorting logics |
+| Example Usage | Sorting by Employee ID | Sorting by Employee Name, Age, etc. |
+| Used In | `TreeSet`, `TreeMap`, `Collections.sort()` | `Collections.sort()` with custom sorting |
+
+---
+
+## **🔹 When to Use What?**
+- ✅ **Use `Comparable` when a single, natural ordering is required (e.g., sorting by ID).**
+- ✅ **Use `Comparator` when multiple sorting options are needed (e.g., sorting by Name, Age, Salary).**
+
+Would you like to see more real-world examples or performance considerations? 🚀
