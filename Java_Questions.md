@@ -903,3 +903,515 @@ To make a class a Singleton in Java, follow these steps:
 4. Add **reflection**, **serialization**, and **clone safety** to ensure the integrity of the Singleton pattern.
 
 By following these steps, you can ensure that the class is a properly implemented Singleton in Java.
+
+
+# **Explain collection Hierarchy.**
+### **Collection Hierarchy in Java**  
+
+In Java, the **Collection Framework** provides a well-defined hierarchy of interfaces and classes for managing a group of objects. This hierarchy is divided into three main parts:  
+- **Collection Interface (for storing individual objects)**
+- **Map Interface (for key-value pairs)**
+- **Utility classes (like Arrays, Collections, etc.)**
+
+---
+
+### **1️⃣ Collection Interface Hierarchy**  
+
+#### **`java.util.Collection` (Root Interface)**
+- **Superinterface of all collection classes.**
+- Defines basic operations like `add()`, `remove()`, `size()`, etc.
+
+#### **↳ List Interface (Ordered, Allows Duplicates)**
+- **Preserves insertion order.**
+- **Allows duplicate elements.**
+- Indexed-based access (`get(index)`).
+
+##### **Implementations of List:**
+1. **ArrayList** (Fast, dynamic array)
+   - Uses a dynamic array internally.
+   - Fast read (`O(1)`) but slow insertion/deletion (`O(n)`).
+   - **Example:**
+     ```java
+     List<String> list = new ArrayList<>();
+     list.add("A");
+     list.add("B");
+     ```
+
+2. **LinkedList** (Doubly Linked List)
+   - Uses a **doubly linked list** internally.
+   - **Fast insertion/deletion (`O(1)`) but slower access (`O(n)`).**
+   - **Example:**
+     ```java
+     List<String> list = new LinkedList<>();
+     list.add("A");
+     list.add("B");
+     ```
+
+3. **Vector** (Synchronized version of ArrayList)
+   - **Thread-safe** (but slower due to synchronization).
+   - **Example:**
+     ```java
+     List<String> vector = new Vector<>();
+     vector.add("A");
+     ```
+
+4. **Stack** (LIFO - Last In, First Out)
+   - Subclass of `Vector`.
+   - Provides `push()`, `pop()`, `peek()`.
+   - **Example:**
+     ```java
+     Stack<Integer> stack = new Stack<>();
+     stack.push(10);
+     stack.pop();
+     ```
+
+---
+
+#### **↳ Set Interface (Unique Elements, Unordered)**
+- **Does not allow duplicates.**
+- No index-based access.
+
+##### **Implementations of Set:**
+1. **HashSet** (Unordered, Uses HashTable)
+   - **Does not maintain insertion order.**
+   - Fast operations (`O(1)`) but **random order**.
+   - **Example:**
+     ```java
+     Set<String> set = new HashSet<>();
+     set.add("A");
+     set.add("B");
+     ```
+
+2. **LinkedHashSet** (Maintains Insertion Order)
+   - **Preserves insertion order.**
+   - **Example:**
+     ```java
+     Set<String> set = new LinkedHashSet<>();
+     set.add("A");
+     set.add("B");
+     ```
+
+3. **TreeSet** (Sorted Set, Uses Red-Black Tree)
+   - **Stores elements in sorted order (natural/comparator).**
+   - **Example:**
+     ```java
+     Set<Integer> set = new TreeSet<>();
+     set.add(5);
+     set.add(1);
+     ```
+
+---
+
+#### **↳ Queue Interface (FIFO - First In, First Out)**
+- **Elements processed in order of insertion.**
+- Used in **task scheduling, buffering, etc.**
+
+##### **Implementations of Queue:**
+1. **PriorityQueue** (Sorted Queue)
+   - Orders elements based on priority (natural or comparator).
+   - **Example:**
+     ```java
+     Queue<Integer> queue = new PriorityQueue<>();
+     queue.add(10);
+     queue.add(5);
+     queue.add(15);
+     ```
+
+2. **ArrayDeque** (Efficient Double-Ended Queue)
+   - **Faster than `Stack` and `LinkedList`** for stack/queue operations.
+   - **Example:**
+     ```java
+     Deque<Integer> deque = new ArrayDeque<>();
+     deque.addFirst(1);
+     deque.addLast(2);
+     ```
+
+---
+
+### **2️⃣ Map Interface Hierarchy (Key-Value Pairs)**  
+
+#### **↳ Map Interface**
+- Stores **(key, value) pairs**.
+- **Keys must be unique**, but values can be duplicate.
+
+##### **Implementations of Map:**
+1. **HashMap** (Unordered, Fast)
+   - Stores key-value pairs in a **hash table**.
+   - **Does not maintain insertion order.**
+   - **Example:**
+     ```java
+     Map<Integer, String> map = new HashMap<>();
+     map.put(1, "A");
+     map.put(2, "B");
+     ```
+
+2. **LinkedHashMap** (Ordered HashMap)
+   - **Maintains insertion order.**
+   - **Example:**
+     ```java
+     Map<Integer, String> map = new LinkedHashMap<>();
+     map.put(1, "A");
+     map.put(2, "B");
+     ```
+
+3. **TreeMap** (Sorted Map, Red-Black Tree)
+   - Stores keys in **sorted order (natural/comparator).**
+   - **Example:**
+     ```java
+     Map<Integer, String> map = new TreeMap<>();
+     map.put(2, "B");
+     map.put(1, "A");
+     ```
+
+4. **Hashtable** (Thread-safe, Synchronized)
+   - Similar to `HashMap`, but **synchronized**.
+   - **Example:**
+     ```java
+     Map<Integer, String> table = new Hashtable<>();
+     table.put(1, "A");
+     ```
+
+---
+
+### **🔹 Collection Framework Hierarchy Diagram**
+```
+                     Collection (Interface)
+                           │
+      ┌────────────────────┴───────────────────┐
+      │                  │                     │
+    List               Set                   Queue
+    │                  │                       │
+ ┌──┴───┐        ┌──────┴──────┐          ┌────┴────┐
+ │ArrayList│     │ HashSet     │          │ PriorityQueue │
+ │LinkedList│     │ LinkedHashSet │          │ ArrayDeque   │
+ │Vector   │     │ TreeSet      │          │ LinkedList   │
+ │Stack    │                         │                 │
+
+                     Map (Key-Value)
+                        │
+        ┌───────────────┴───────────────┐
+    HashMap       LinkedHashMap       TreeMap
+        │                                  │
+    Hashtable                           SortedMap
+```
+
+---
+
+### **🔹 Summary Table**
+| **Type**  | **Allows Duplicates?** | **Ordered?** | **Sorted?** | **Thread-Safe?** |
+|-----------|------------------|-----------|---------|--------------|
+| `ArrayList` | ✅ Yes | ✅ Yes | ❌ No | ❌ No |
+| `LinkedList` | ✅ Yes | ✅ Yes | ❌ No | ❌ No |
+| `Vector` | ✅ Yes | ✅ Yes | ❌ No | ✅ Yes |
+| `Stack` | ✅ Yes | ✅ Yes | ❌ No | ✅ Yes |
+| `HashSet` | ❌ No | ❌ No | ❌ No | ❌ No |
+| `LinkedHashSet` | ❌ No | ✅ Yes | ❌ No | ❌ No |
+| `TreeSet` | ❌ No | ✅ Yes | ✅ Yes | ❌ No |
+| `PriorityQueue` | ✅ Yes | ❌ No | ✅ Yes | ❌ No |
+| `ArrayDeque` | ✅ Yes | ✅ Yes | ❌ No | ❌ No |
+| `HashMap` | ✅ Yes (Values) | ❌ No | ❌ No | ❌ No |
+| `LinkedHashMap` | ✅ Yes (Values) | ✅ Yes | ❌ No | ❌ No |
+| `TreeMap` | ✅ Yes (Values) | ✅ Yes | ✅ Yes | ❌ No |
+| `Hashtable` | ✅ Yes (Values) | ❌ No | ❌ No | ✅ Yes |
+
+---
+
+### **🔹 Conclusion**
+- **Lists** allow duplicates and maintain order.
+- **Sets** ensure uniqueness.
+- **Queues** work in FIFO order.
+- **Maps** store key-value pairs.
+
+# **Why Doesn't `Map` Extend the `Collection` Interface in Java?**  
+
+In Java, the **`Map` interface** does **not** extend the **`Collection` interface**, and this is by design. The main reasons are:
+
+---
+
+### **1️⃣ Conceptual Difference**
+- **`Collection<E>`** is designed for storing a **group of individual elements**.
+- **`Map<K, V>`** is designed for storing **key-value pairs**, where each key is unique.
+
+Extending `Collection` would force `Map` to follow rules that don’t fit its structure, such as:
+- **Allowing duplicate elements** (but `Map` requires unique keys).
+- **Providing iterator-based access** (but `Map` is accessed by keys, not iteration).
+
+---
+
+### **2️⃣ Different Data Structures**
+A `Collection` is typically a **list**, **set**, or **queue**, which holds individual elements in some order. However, a `Map` uses **key-value pairs**, making it more like a dictionary or a lookup table.  
+
+For example:  
+```java
+List<String> list = new ArrayList<>();
+list.add("Apple"); // Single elements stored
+
+Map<Integer, String> map = new HashMap<>();
+map.put(1, "Apple"); // Key-Value pairs stored
+```
+
+---
+
+### **3️⃣ Incompatibility with `Collection` Methods**
+If `Map` extended `Collection`, it would be forced to implement methods that don't make sense, such as:
+- **`add(E e)`** → `Map` requires key-value pairs (`put(K, V)`) instead.
+- **`iterator()`** → `Map` doesn't store elements linearly.
+
+Since `Map` has a completely different structure, its access patterns and operations **don't align with `Collection`'s contract**.
+
+---
+
+### **4️⃣ Alternative Design Choice: `Map` Provides Collection Views**
+Instead of extending `Collection`, the `Map` interface provides **views** that follow the `Collection` interface:
+- **`map.keySet()`** → Returns a `Set<K>` of keys.
+- **`map.values()`** → Returns a `Collection<V>` of values.
+- **`map.entrySet()`** → Returns a `Set<Map.Entry<K, V>>` of key-value pairs.
+
+This approach allows `Map` to **interact with the Collection framework while keeping its unique structure**.
+
+Example:
+```java
+Map<Integer, String> map = new HashMap<>();
+map.put(1, "Apple");
+map.put(2, "Banana");
+
+// Get key set (as a Collection)
+Set<Integer> keys = map.keySet();
+
+// Get values (as a Collection)
+Collection<String> values = map.values();
+```
+
+---
+
+### **🔹 Conclusion**
+- `Map` is **not a true "collection"** of elements but rather a **mapping of keys to values**.
+- If `Map` extended `Collection`, it would **inherit methods that don’t logically apply** to key-value structures.
+- Instead, Java provides **`keySet()`, `values()`, and `entrySet()`** for Collection-like behavior.
+
+
+# **What are the difference between Fail-Fast and Fail-Safe Iterator in Java**
+
+Iterators in Java can be categorized as **Fail-Fast** and **Fail-Safe** based on how they handle concurrent modifications of a collection.
+
+---
+
+### **1️⃣ Fail-Fast Iterator**
+**🔹 Definition:**  
+A **Fail-Fast Iterator** throws a **`ConcurrentModificationException`** if the collection is modified while iterating, except via the iterator’s own `remove()` method.
+
+**🔹 Key Characteristics:**
+- Directly accesses the collection’s structure.
+- Fails immediately if the collection is modified **during iteration**.
+- Uses **modCount** (modification count) to detect concurrent modification.
+
+**🔹 Examples of Fail-Fast Iterators:**
+- `ArrayList`
+- `HashSet`
+- `HashMap` (for `keySet()`, `values()`, and `entrySet()` iterators)
+
+**🔹 Code Example (Fail-Fast)**
+```java
+import java.util.*;
+
+public class FailFastExample {
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<>();
+        list.add("A");
+        list.add("B");
+        list.add("C");
+
+        Iterator<String> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next());
+            list.add("D");  // Modifying collection while iterating
+        }
+    }
+}
+```
+**🔸 Output:**  
+```
+A
+Exception in thread "main" java.util.ConcurrentModificationException
+```
+---
+
+### **2️⃣ Fail-Safe Iterator**
+**🔹 Definition:**  
+A **Fail-Safe Iterator** does **not throw `ConcurrentModificationException`** because it iterates over a **clone** of the collection instead of the original one.
+
+**🔹 Key Characteristics:**
+- Works on a **copy** of the collection, so modifications don’t affect iteration.
+- Doesn’t reflect changes made during iteration.
+- Uses **Copy-on-Write** or **snapshot mechanism**.
+
+**🔹 Examples of Fail-Safe Iterators:**
+- `CopyOnWriteArrayList`
+- `CopyOnWriteArraySet`
+- `ConcurrentHashMap`
+
+**🔹 Code Example (Fail-Safe)**
+```java
+import java.util.concurrent.*;
+
+public class FailSafeExample {
+    public static void main(String[] args) {
+        CopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<>();
+        list.add("A");
+        list.add("B");
+        list.add("C");
+
+        Iterator<String> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next());
+            list.add("D"); // Modifying collection while iterating (No Exception)
+        }
+    }
+}
+```
+**🔸 Output:**  
+```
+A
+B
+C
+```
+(No exception occurs, but `"D"` won’t be reflected in this iteration)
+
+---
+
+### **3️⃣ Key Differences:**
+| Feature         | **Fail-Fast Iterator** | **Fail-Safe Iterator** |
+|---------------|---------------------|---------------------|
+| **Exception Handling** | Throws `ConcurrentModificationException` if modified | No exception, operates on a copy |
+| **Modification** | Detects modification via `modCount` | Uses a cloned copy (snapshot) |
+| **Thread-Safety** | Not thread-safe | Thread-safe |
+| **Performance** | Faster but not safe for concurrent modification | Slower due to extra memory overhead |
+| **Example Collections** | `ArrayList`, `HashSet`, `HashMap` | `CopyOnWriteArrayList`, `ConcurrentHashMap` |
+
+---
+
+### **4️⃣ When to Use Which?**
+- **Use Fail-Fast iterators** when working with **single-threaded** applications where **modifications should not happen during iteration**.
+- **Use Fail-Safe iterators** in **multi-threaded environments** where concurrent modification is expected.
+
+---
+
+### **🔹 Conclusion**
+- **Fail-Fast iterators** are faster but throw an exception if the collection is modified.
+- **Fail-Safe iterators** allow modifications but operate on a cloned copy, making them **safe but less efficient**.
+
+# **What do you understand by BlockingQueue in Java?**
+### **🔹 Definition**
+A `BlockingQueue` is a type of queue in Java that **supports operations that wait** for the queue to become non-empty when retrieving elements and wait for space to become available when storing elements.
+
+It is particularly useful in **multi-threaded environments** where **one thread** is **producing** items and **another thread** is **consuming** them.
+
+---
+
+### **🔹 Key Features**
+1. **Thread-safe** – Designed for concurrent access without explicit synchronization.
+2. **Blocking Operations** – 
+   - `take()`: Waits if the queue is **empty** until an element becomes available.
+   - `put()`: Waits if the queue is **full** until space is available.
+3. **No `null` Values** – Unlike normal queues, `BlockingQueue` **does not allow null values**.
+4. **Can Have Capacity Limits** – Some implementations have a **fixed size**, while others can be **unbounded**.
+5. **Does Not Support Iterators** – Unlike normal queues, its iterators do not necessarily reflect the latest elements.
+
+---
+
+### **🔹 BlockingQueue Implementations in Java**
+The `BlockingQueue` interface is part of **`java.util.concurrent`** package and has different implementations:
+
+| **BlockingQueue Type** | **Description** |
+|-------------------|--------------------------------------|
+| `ArrayBlockingQueue` | Fixed-size, **bounded** blocking queue (uses an array internally). |
+| `LinkedBlockingQueue` | Optionally **bounded**, uses a linked list internally. |
+| `PriorityBlockingQueue` | **Unbounded**, sorts elements based on their priority. |
+| `DelayQueue` | Stores elements with an associated **delay time**, elements become available only after the delay expires. |
+| `SynchronousQueue` | No storage; **each insert must wait for a remove**, useful for handoff scenarios. |
+| `LinkedTransferQueue` | Optimized for producer-consumer patterns, more advanced than `LinkedBlockingQueue`. |
+
+---
+
+### **🔹 Example: Producer-Consumer Using `BlockingQueue`**
+```java
+import java.util.concurrent.*;
+
+public class BlockingQueueExample {
+    public static void main(String[] args) {
+        BlockingQueue<Integer> queue = new ArrayBlockingQueue<>(5);
+
+        // Producer thread
+        Thread producer = new Thread(() -> {
+            try {
+                for (int i = 1; i <= 10; i++) {
+                    queue.put(i);  // Puts element into queue (waits if full)
+                    System.out.println("Produced: " + i);
+                    Thread.sleep(500);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        // Consumer thread
+        Thread consumer = new Thread(() -> {
+            try {
+                while (true) {
+                    int item = queue.take();  // Takes element from queue (waits if empty)
+                    System.out.println("Consumed: " + item);
+                    Thread.sleep(1000);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        producer.start();
+        consumer.start();
+    }
+}
+```
+
+### **🔹 Output**
+```
+Produced: 1
+Consumed: 1
+Produced: 2
+Produced: 3
+Consumed: 2
+Produced: 4
+Produced: 5
+Consumed: 3
+Produced: 6
+...
+```
+🔹 The **producer waits** if the queue is full, and the **consumer waits** if the queue is empty.
+
+---
+
+### **🔹 When to Use `BlockingQueue`?**
+✅ When implementing **Producer-Consumer** pattern.  
+✅ When handling **multi-threaded** communication.  
+✅ When you need to **limit memory usage** (bounded queue).  
+✅ When you need **safe, thread-controlled access** to shared resources.
+
+---
+
+### **🔹 Key Differences Between `Queue` and `BlockingQueue`**
+| Feature           | `Queue` (e.g., `LinkedList`) | `BlockingQueue` (e.g., `ArrayBlockingQueue`) |
+|------------------|-------------------|-------------------|
+| **Thread Safety** | **Not thread-safe** | **Thread-safe** |
+| **Blocking Methods** | **No blocking** | **Blocks on full/empty** |
+| **Capacity** | **Unbounded** | **Can be bounded or unbounded** |
+| **Operations on Full Queue** | Throws exception | Waits (`put()` method) |
+| **Operations on Empty Queue** | Returns `null` | Waits (`take()` method) |
+
+---
+
+### **🔹 Conclusion**
+- `BlockingQueue` is a **thread-safe queue** that supports **blocking operations**.
+- It **prevents concurrency issues** by handling synchronization internally.
+- Ideal for **producer-consumer** and **multi-threading** scenarios.
+
+Would you like an example with a **different implementation** like `SynchronousQueue` or `PriorityBlockingQueue`? 🚀
