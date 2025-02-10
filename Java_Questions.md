@@ -1415,3 +1415,181 @@ Produced: 6
 - Ideal for **producer-consumer** and **multi-threading** scenarios.
 
 Would you like an example with a **different implementation** like `SynchronousQueue` or `PriorityBlockingQueue`? 🚀
+
+# **Explain Internal Working of `HashMap` in Java**
+The `HashMap` in Java is part of the `java.util` package and is widely used for key-value storage. It is based on **hashing** and provides **O(1) average time complexity** for operations like **get()** and **put()**.
+
+---
+
+### **🔹 Data Structure Used**
+Internally, `HashMap` uses an **array of buckets (Node<K, V>[])** where each bucket is a **linked list** (or a balanced tree in some cases). Each key-value pair is stored as an **entry** inside these buckets.
+
+From Java **8 onwards**, if the number of entries in a bucket exceeds **8**, the linked list is converted into a **Red-Black Tree** to optimize search performance.
+
+---
+
+### **🔹 Internal Structure of `HashMap`**
+Each entry in `HashMap` is represented as a **Node<K, V>** (previously `Entry<K, V>` in Java 7):
+
+```java
+static class Node<K, V> {
+    final int hash;   // Hashcode of key
+    final K key;      // Key
+    V value;          // Value
+    Node<K, V> next;  // Pointer to next node in the bucket
+
+    Node(int hash, K key, V value, Node<K, V> next) {
+        this.hash = hash;
+        this.key = key;
+        this.value = value;
+        this.next = next;
+    }
+}
+```
+
+---
+
+## **🔹 How `put(K key, V value)` Works?**
+1. **Compute Hash** – The key’s `hashCode()` is computed and transformed into an **index** using `indexFor(hash, capacity)`.
+2. **Find Bucket** – The calculated index determines which bucket (array index) will store the entry.
+3. **Check for Collision**:
+   - If **no collision** (i.e., the bucket is empty), insert the new node.
+   - If **collision** occurs (another entry exists at the same index), it checks using `.equals()`:
+     - If **keys are the same**, **update** the value.
+     - If **different keys**, add the new entry at the end of the linked list.
+4. **Convert to Red-Black Tree** – If the bucket size exceeds 8, it converts to a **tree** for faster lookup.
+
+### **🔹 Example**
+```java
+HashMap<String, Integer> map = new HashMap<>();
+map.put("Apple", 100);
+map.put("Orange", 200);
+map.put("Banana", 300);
+```
+
+### **🔹 Bucket Index Calculation**
+1. `hash("Apple")` → **hash value** (e.g., `12345678`).
+2. `index = hash & (n-1)` where `n` is the capacity (default `16`).
+3. Value is stored at the computed index.
+
+---
+
+## **🔹 How `get(K key)` Works?**
+1. **Compute Hash** – The hash of the key is computed.
+2. **Find Bucket** – The index is determined using `indexFor(hash, capacity)`.
+3. **Search in the Bucket**:
+   - If a single entry exists, return its value.
+   - If multiple entries exist (collision), iterate using `.equals()` to find the matching key.
+4. **Return the Value**.
+
+---
+
+## **🔹 Handling Collisions**
+Since multiple keys can map to the **same bucket index**, Java uses:
+1. **Chaining (Linked List)** – Multiple entries at the same index are stored as a **linked list**.
+2. **Tree-based Buckets (Java 8+)** – If the linked list grows **beyond 8 nodes**, it is converted into a **Red-Black Tree** for better performance.
+
+---
+
+## **🔹 HashMap Resizing**
+- The default capacity of a `HashMap` is **16**.
+- When the size **exceeds 75% of the capacity** (`load factor = 0.75`), the `HashMap` **doubles in size** (16 → 32 → 64) and **rehashes** all entries.
+
+---
+
+## **🔹 Performance Complexity**
+| Operation | Average Case | Worst Case (Many Collisions) |
+|-----------|-------------|-------------------------------|
+| `put()` | **O(1)** | **O(n) (if linked list grows long)** |
+| `get()` | **O(1)** | **O(log n) (if tree-based bucket)** |
+| `remove()` | **O(1)** | **O(log n)** |
+
+---
+
+## **🔹 Summary**
+- **Uses an array of linked lists** (or Red-Black trees for large collisions).
+- **Hashing and index computation** determine bucket placement.
+- **Collisions are handled** using chaining and trees.
+- **Resizing occurs** when the load factor exceeds 0.75.
+
+# **Is Java Pass-by-Value or Pass-by-Reference?**  
+
+### **🔹 Short Answer:**  
+Java is **always pass-by-value**, but for objects, the value passed is a **reference to the object** (not the actual object itself).  
+
+---
+
+### **🔹 Understanding Pass-by-Value in Java**  
+When you pass a variable to a method in Java, a **copy of the variable's value** is passed. Changes made inside the method **do not** affect the original variable outside the method.
+
+#### **Example 1: Passing Primitives (Pass-by-Value)**
+```java
+public class PassByValueExample {
+    public static void modifyValue(int num) {
+        num = 20;  // Changing local copy
+    }
+
+    public static void main(String[] args) {
+        int a = 10;
+        modifyValue(a);
+        System.out.println(a);  // Output: 10 (original value remains unchanged)
+    }
+}
+```
+✅ Here, `num` gets a **copy** of `a`. Modifying `num` does not change `a`.
+
+---
+
+### **🔹 What About Objects?**
+When you pass an object to a method, **the reference (memory address) is passed by value**, but the object itself is **not copied**.  
+So, changes to the object's **fields** persist, but reassigning the reference inside the method does not affect the original reference.
+
+#### **Example 2: Passing Object Reference (Reference Passed by Value)**
+```java
+class Dog {
+    String name;
+    
+    Dog(String name) {
+        this.name = name;
+    }
+}
+
+public class PassByValueTest {
+    public static void modifyDog(Dog dog) {
+        dog.name = "Rocky";  // Modifies object field (will persist)
+    }
+
+    public static void main(String[] args) {
+        Dog myDog = new Dog("Bruno");
+        modifyDog(myDog);
+        System.out.println(myDog.name);  // Output: Rocky (Object's field modified)
+    }
+}
+```
+✅ The object's **field** is modified because the reference **points to the same object**.
+
+#### **Example 3: Reassigning Object Reference (Original Reference Unchanged)**
+```java
+public class PassByValueExample {
+    public static void modifyObject(Dog dog) {
+        dog = new Dog("Charlie");  // Assigning new object (no effect outside)
+    }
+
+    public static void main(String[] args) {
+        Dog myDog = new Dog("Bruno");
+        modifyObject(myDog);
+        System.out.println(myDog.name);  // Output: Bruno (Reference remains unchanged)
+    }
+}
+```
+✅ Here, `dog = new Dog("Charlie")` **only changes the local reference**, so `myDog` still points to `"Bruno"`.
+
+---
+
+### **🔹 Key Takeaways**
+1. **Primitives (int, double, etc.)** → **Pass-by-Value** (changes inside method do not affect original variable).
+2. **Objects** → The **reference is passed by value**, meaning:
+   - Modifying **object fields** affects the original object.
+   - Reassigning a new object inside the method **does not** affect the original reference.
+
+Would you like an analogy to clarify this concept further? 🚀
