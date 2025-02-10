@@ -1999,4 +1999,73 @@ public class Main {
 - Use **`Objects.hash()`** for simplicity in `hashCode()`.
 - Never use **mutable fields** in `hashCode()`.
 
-Would you like more examples or a deep dive into hashing in Java? 🚀
+# **Is restricted access to derived method allowed?**
+In Java, **restricted access to a derived (overridden) method is **not** allowed.** This means that when you override a method in a subclass, you **cannot** reduce the visibility of that method.  
+
+### **🚫 Rule:**
+> **You cannot override a method with a more restrictive access modifier than its superclass method.**  
+
+---
+
+## **✅ Allowed:**
+You can **increase** or keep the same level of access when overriding a method.
+
+```java
+class Parent {
+    protected void show() {  // Protected method
+        System.out.println("Parent class method");
+    }
+}
+
+class Child extends Parent {
+    @Override
+    public void show() {  // Increased access to public (Allowed)
+        System.out.println("Child class method");
+    }
+}
+```
+✅ This is **allowed** because the access modifier is changed from `protected` → `public`, which is **more accessible**.
+
+---
+
+## **❌ Not Allowed:**
+You **cannot** reduce visibility when overriding a method.
+
+```java
+class Parent {
+    public void display() {  // Public method
+        System.out.println("Parent class method");
+    }
+}
+
+class Child extends Parent {
+    @Override
+    private void display() {  // ❌ Error: Cannot reduce visibility
+        System.out.println("Child class method");
+    }
+}
+```
+🚨 **Error:**  
+```
+display() in Child cannot override display() in Parent
+attempting to assign weaker access privileges; was public
+```
+🔴 This happens because the `Parent` class method is `public`, but the overridden method in `Child` is `private`, which is **more restrictive**.
+
+---
+
+## **🔹 Access Modifier Rules for Overriding**
+| Parent Class Method Modifier | Allowed Modifiers in Child Class |
+|-----------------------------|--------------------------------|
+| `private`                  | 🚫 Cannot be overridden |
+| `default` (package-private) | `protected`, `public` |
+| `protected`                 | `protected`, `public` |
+| `public`                    | ✅ Only `public` (Cannot be restricted) |
+
+---
+
+## **🔹 Summary**
+- **Cannot** reduce access while overriding a method.
+- **Can** increase access (e.g., `protected` → `public`).
+- **`private` methods** cannot be overridden (they are not inherited).
+- Java enforces these rules to ensure that overridden methods **do not break encapsulation** or **reduce access unexpectedly**.
