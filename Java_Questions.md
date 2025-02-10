@@ -6298,3 +6298,307 @@ public enum EnumSingleton {
 - Use `enum` for **simpler, reflection-safe, and thread-safe** singleton implementation.  
 
 Would you like this formatted in **LaTeX** for your book? 📖🔥
+
+# **Explain the shadowing of static methods.**
+### **Shadowing of Static Methods in Java**  
+
+In Java, **shadowing** occurs when a **static method** in a **subclass** has the **same signature** as a **static method** in its **superclass**. Unlike instance methods, **static methods are not overridden** but are instead **shadowed**.  
+
+---
+
+### **1. Key Concepts of Static Method Shadowing**  
+- Static methods are **resolved at compile time** based on the **reference type** and not at runtime (like instance methods).  
+- **Method overriding does not apply** to static methods.  
+- The method **in the superclass is hidden** but **not overridden** by the subclass method.  
+- Calling the method depends on the **reference type**, not the actual object type.
+
+---
+
+### **2. Example of Static Method Shadowing**  
+
+```java
+class Parent {
+    static void display() {
+        System.out.println("Static method in Parent");
+    }
+}
+
+class Child extends Parent {
+    static void display() {
+        System.out.println("Static method in Child");
+    }
+}
+
+public class ShadowingExample {
+    public static void main(String[] args) {
+        Parent p1 = new Parent();
+        Parent p2 = new Child();
+        Child c1 = new Child();
+
+        p1.display();  // Output: Static method in Parent
+        p2.display();  // Output: Static method in Parent (not Child)
+        c1.display();  // Output: Static method in Child
+    }
+}
+```
+---
+
+### **3. Why Does This Happen?**
+- **Static methods belong to the class, not instances** → They are resolved at **compile-time**.  
+- Since `p2` is declared as `Parent`, the **Parent's static method** is called, even though the object is of type `Child`.  
+
+---
+
+### **4. Difference Between Shadowing and Overriding**
+| Feature           | Static Method Shadowing  | Method Overriding  |
+|------------------|-------------------------|--------------------|
+| Applies To       | Static methods           | Instance methods   |
+| Resolution Time  | Compile-time (Reference Type) | Runtime (Object Type) |
+| Behavior         | Hides method from superclass | Overrides superclass method |
+| Polymorphism     | Not applicable           | Supports polymorphism |
+
+---
+
+### **5. Important Points**
+✅ Static methods **cannot be overridden**, only hidden (shadowed).  
+✅ **Reference type** determines which static method is called, not the object type.  
+✅ Always use **instance methods** if polymorphic behavior is required.  
+
+Would you like this formatted in **LaTeX** for your book? 📖🔥
+
+# **Explain the concept of Aggegration and Composition.**
+### **Aggregation and Composition in Java (Has-A Relationship)**  
+
+In Object-Oriented Programming (OOP), **Aggregation** and **Composition** are two types of **Has-A relationships**, where one class contains an instance of another class. They represent **different levels of association** between objects.
+
+---
+
+## **1. Aggregation**
+**Definition:**  
+Aggregation is a **weak** form of association where one class contains a reference to another class, but both objects can exist **independently**. It represents a **"Has-A" relationship** without ownership.  
+
+🔹 **Key Characteristics:**  
+- Represents a **weak** relationship (loosely coupled).  
+- The **contained object can exist independently** of the container object.  
+- Uses an **association** but does not enforce lifecycle dependency.  
+- Implemented using **references** to other objects.
+
+**Example of Aggregation:**  
+```java
+class Address {
+    String city, state, country;
+    
+    Address(String city, String state, String country) {
+        this.city = city;
+        this.state = state;
+        this.country = country;
+    }
+}
+
+class Employee {
+    String name;
+    Address address;  // Aggregation (Has-A Relationship)
+    
+    Employee(String name, Address address) {
+        this.name = name;
+        this.address = address;
+    }
+
+    void display() {
+        System.out.println(name + " lives in " + address.city + ", " + address.state);
+    }
+}
+
+public class AggregationExample {
+    public static void main(String[] args) {
+        Address addr = new Address("Mumbai", "Maharashtra", "India");
+        Employee emp = new Employee("Raj", addr);
+        emp.display();
+    }
+}
+```
+🔹 **Explanation:**  
+- `Employee` **has-a** `Address`, but the `Address` object **can exist independently** from the `Employee` object.
+- If the `Employee` object is deleted, the `Address` object **is not deleted**.
+
+---
+
+## **2. Composition**
+**Definition:**  
+Composition is a **strong** form of association where one class owns another class, and the contained object **cannot exist independently**. It represents a **"Has-A" relationship with ownership**.
+
+🔹 **Key Characteristics:**  
+- Represents a **strong** relationship (tightly coupled).  
+- The **contained object cannot exist independently** of the container.  
+- If the **container object is destroyed, the contained object is also destroyed**.  
+- Implemented using **instance variables**.
+
+**Example of Composition:**  
+```java
+class Engine {
+    Engine() {
+        System.out.println("Engine Created");
+    }
+}
+
+class Car {
+    private final Engine engine;  // Composition (Strong Has-A Relationship)
+    
+    Car() {
+        engine = new Engine();  // Engine is created when Car is created
+    }
+
+    void start() {
+        System.out.println("Car is starting...");
+    }
+}
+
+public class CompositionExample {
+    public static void main(String[] args) {
+        Car car = new Car();  // Car owns Engine
+        car.start();
+    }
+}
+```
+🔹 **Explanation:**  
+- `Car` **has-a** `Engine`, but the `Engine` **cannot exist independently** from `Car`.  
+- If `Car` is destroyed, `Engine` is **also destroyed** automatically.
+
+---
+
+## **3. Differences Between Aggregation and Composition**
+| Feature        | Aggregation | Composition |
+|--------------|-------------|-------------|
+| Type of Relationship | Weak Has-A | Strong Has-A |
+| Object Dependency | Contained object can exist independently | Contained object cannot exist without container |
+| Lifecycle | Independent | Dependent |
+| Implementation | Uses references | Uses instance variables |
+| Example | `Employee` and `Address` | `Car` and `Engine` |
+
+---
+
+## **4. When to Use Aggregation vs Composition?**
+- **Use Aggregation** when the contained object **can exist independently** (e.g., `Student` has a `College`, but `College` exists without `Student`).
+- **Use Composition** when the contained object **must depend on** the container (e.g., `Car` has an `Engine`, and the `Engine` cannot exist separately from `Car`).
+
+Would you like this in **LaTeX format** for your book? 📖🔥
+
+# **Explain covarient return types.**
+### **Covariant Return Types in Java**  
+
+#### **Definition**  
+A **covariant return type** means that an **overridden method** in a subclass can **return a more specific (subtype) object** than the method in the parent class. This feature was introduced in **Java 5** to improve type safety and avoid unnecessary type casting.
+
+---
+
+### **1. Key Rules of Covariant Return Types**  
+- The method in the **subclass** must **override** the method in the **parent class**.
+- The **return type** of the overridden method **must be a subclass** of the return type declared in the parent class.
+- It improves **readability** and avoids **explicit type casting**.
+
+---
+
+### **2. Example Without Covariant Return Types (Before Java 5)**  
+Before Java 5, the overridden method **had to return the exact same type** as the superclass method. This led to **explicit type casting**.  
+
+```java
+class Animal {
+    Animal get() {  // Parent method returning Animal
+        return this;
+    }
+}
+
+class Dog extends Animal {
+    Dog get() {  // This would cause a compilation error before Java 5
+        return this;
+    }
+
+    void bark() {
+        System.out.println("Dog is barking...");
+    }
+}
+
+public class CovariantExample {
+    public static void main(String[] args) {
+        Dog d = new Dog();
+        Animal a = d.get();  // Returns Animal, requires explicit casting
+
+        Dog d2 = (Dog) a;  // Explicit cast required
+        d2.bark();
+    }
+}
+```
+🔹 **Problem:**  
+- Before Java 5, we **had to cast** the returned object (`(Dog) a`), which **increases error risk**.
+
+---
+
+### **3. Example With Covariant Return Types (Java 5+)**  
+With **covariant return types**, the overridden method in the subclass **can return a subclass type**, avoiding explicit casting.  
+
+```java
+class Animal {
+    Animal get() {  // Parent method returning Animal
+        return this;
+    }
+}
+
+class Dog extends Animal {
+    @Override
+    Dog get() {  // Overridden method returns Dog (subclass of Animal)
+        return this;
+    }
+
+    void bark() {
+        System.out.println("Dog is barking...");
+    }
+}
+
+public class CovariantExample {
+    public static void main(String[] args) {
+        Dog d = new Dog();
+        Dog d2 = d.get();  // No explicit casting needed
+        d2.bark();
+    }
+}
+```
+🔹 **Advantages:**  
+- No **explicit casting** is required.
+- The return type is **more specific**, improving **type safety**.
+- Makes the code **cleaner and easier to read**.
+
+---
+
+### **4. Example with Factory Pattern**
+Covariant return types are commonly used in the **Factory Pattern** to return more specific instances.
+
+```java
+class Vehicle {
+    Vehicle create() {
+        return new Vehicle();
+    }
+}
+
+class Car extends Vehicle {
+    @Override
+    Car create() {
+        return new Car();  // Covariant return type
+    }
+}
+
+public class FactoryExample {
+    public static void main(String[] args) {
+        Car car = new Car();
+        Car newCar = car.create();  // No casting needed
+        System.out.println("New car object created: " + newCar);
+    }
+}
+```
+---
+
+### **5. When to Use Covariant Return Types?**  
+- When **overriding methods**, and you need a more specific return type.
+- When working with **factories** or **builder patterns**, where returning a more specialized instance makes sense.
+- When **avoiding unnecessary type casting** improves code readability and maintainability.
+
+Would you like this formatted in **LaTeX** for your book? 📖🚀
