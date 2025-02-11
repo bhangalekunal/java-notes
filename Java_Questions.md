@@ -6904,3 +6904,1361 @@ public class CustomExceptionExample {
 ✔ **Use meaningful exception messages** to help debugging.  
 
 Would you like this answer in **LaTeX** format for your book? 📖🚀
+
+# **what are the Difference between Exception VS Error?**
+### **Difference Between Exception and Error in Java**  
+
+In Java, both **Exceptions** and **Errors** are **subclasses of `Throwable`**, but they represent different types of issues that occur during program execution.
+
+---
+
+## **Key Differences Between Exception and Error**
+| **Feature** | **Exception** | **Error** |
+|------------|--------------|------------|
+| **Definition** | Unexpected events that can be handled by the program | Serious problems that **cannot** be handled by the program |
+| **Cause** | Occurs due to logical issues (e.g., invalid input, null reference) | Occurs due to system failure (e.g., memory issues, JVM crash) |
+| **Recoverable?** | ✅ Yes, can be caught using `try-catch` | ❌ No, usually not recoverable |
+| **Hierarchy** | Subclass of `java.lang.Exception` | Subclass of `java.lang.Error` |
+| **Handling** | Handled using `try-catch` or `throws` keyword | Should **not** be handled, as it's fatal |
+| **Examples** | `NullPointerException`, `IOException`, `ArithmeticException` | `OutOfMemoryError`, `StackOverflowError`, `VirtualMachineError` |
+
+---
+
+## **1. What is an Exception?**
+An **Exception** is an **unexpected event** that **can be handled** using `try-catch` blocks.
+
+### ✅ **Example: Handling an Exception**
+```java
+public class ExceptionExample {
+    public static void main(String[] args) {
+        try {
+            int result = 10 / 0; // Causes ArithmeticException
+        } catch (ArithmeticException e) {
+            System.out.println("Handled Exception: " + e.getMessage());
+        }
+        System.out.println("Program continues...");
+    }
+}
+```
+**Output:**
+```
+Handled Exception: / by zero
+Program continues...
+```
+🔹 **The program continues execution after handling the exception.**
+
+---
+
+## **2. What is an Error?**
+An **Error** is a serious system-level failure that **cannot be handled** in code.
+
+### ❌ **Example: Error (StackOverflowError)**
+```java
+public class ErrorExample {
+    public static void recursiveMethod() {
+        recursiveMethod(); // Infinite recursion causes StackOverflowError
+    }
+
+    public static void main(String[] args) {
+        recursiveMethod(); 
+    }
+}
+```
+**Output (JVM Crash Example):**
+```
+Exception in thread "main" java.lang.StackOverflowError
+```
+🔹 **The program crashes because `StackOverflowError` cannot be handled.**
+
+---
+
+## **3. Types of Exceptions and Errors**
+### **✅ Types of Exceptions**
+1. **Checked Exceptions** – Must be handled using `try-catch` or `throws`.
+   - `IOException`
+   - `SQLException`
+   - `InterruptedException`
+
+2. **Unchecked Exceptions** – Runtime issues that occur due to bad logic.
+   - `NullPointerException`
+   - `ArithmeticException`
+   - `IndexOutOfBoundsException`
+
+### **❌ Types of Errors**
+- **JVM Errors**: `OutOfMemoryError`, `StackOverflowError`
+- **Linkage Errors**: `NoClassDefFoundError`
+- **Assertion Errors**: `AssertionError`
+
+---
+
+## **4. Summary Table**
+| **Aspect** | **Exception** | **Error** |
+|------------|-------------|-------------|
+| **Recoverable?** | ✅ Yes | ❌ No |
+| **Caused By** | Logical mistakes in code | System failure or JVM crash |
+| **Can be Handled?** | ✅ Yes (try-catch) | ❌ No (should not be caught) |
+| **Occurs At** | Runtime or compile-time | Runtime |
+| **Example** | `NullPointerException`, `IOException` | `OutOfMemoryError`, `StackOverflowError` |
+
+---
+
+## **Final Takeaway**
+🚀 **Use `try-catch` for handling Exceptions**, but **avoid catching Errors** as they indicate serious system failures.  
+Would you like more details on how to handle checked vs. unchecked exceptions? 😊
+
+# **Can We Write Only a `try` Block Without `catch` and `finally` in Java?**  
+No, in Java, a `try` block **must** be followed by either:  
+✅ **At least one `catch` block**  
+✅ **A `finally` block**  
+✅ **Both `catch` and `finally` together**  
+
+If you write a `try` block **without `catch` or `finally`**, it will result in a **compilation error**.
+
+---
+
+## **1. Example: Only `try` Block (Invalid Code)**
+```java
+public class TryOnlyExample {
+    public static void main(String[] args) {
+        try {
+            System.out.println("Inside try block");
+        } // Compilation Error: 'try' without 'catch' or 'finally'
+    }
+}
+```
+❌ **Error:**
+```
+'try' without 'catch' or 'finally'
+```
+🔹 **A `try` block must be followed by a `catch` or `finally`.**
+
+---
+
+## **2. Valid Cases Where a `try` Block Works**
+### ✅ **Case 1: `try` with `catch`**
+```java
+public class TryCatchExample {
+    public static void main(String[] args) {
+        try {
+            int result = 10 / 0; // Throws ArithmeticException
+        } catch (ArithmeticException e) {
+            System.out.println("Exception caught: " + e.getMessage());
+        }
+    }
+}
+```
+**Output:**
+```
+Exception caught: / by zero
+```
+
+---
+
+### ✅ **Case 2: `try` with `finally`**
+```java
+public class TryFinallyExample {
+    public static void main(String[] args) {
+        try {
+            System.out.println("Inside try block");
+        } finally {
+            System.out.println("Finally block executed");
+        }
+    }
+}
+```
+**Output:**
+```
+Inside try block
+Finally block executed
+```
+🔹 **Even if no exception occurs, `finally` runs for cleanup.**
+
+---
+
+### ✅ **Case 3: `try` with `catch` and `finally`**
+```java
+public class TryCatchFinallyExample {
+    public static void main(String[] args) {
+        try {
+            int result = 10 / 0;
+        } catch (ArithmeticException e) {
+            System.out.println("Exception caught");
+        } finally {
+            System.out.println("Finally block executed");
+        }
+    }
+}
+```
+**Output:**
+```
+Exception caught
+Finally block executed
+```
+🔹 **Even if an exception occurs, `finally` runs.**
+
+---
+
+## **3. Why Does Java Enforce This Rule?**
+Java enforces **`try` must have `catch` or `finally`** because:
+1. **Ensures proper exception handling (`catch`).**
+2. **Guarantees resource cleanup (`finally`).**
+3. **Prevents empty `try` blocks that serve no purpose.**
+
+---
+
+## **4. Summary Table**
+| **Scenario** | **Valid?** | **Why?** |
+|-------------|-----------|----------|
+| `try {}` only | ❌ No | Compilation error (`try` without `catch` or `finally`) |
+| `try {}` followed by `catch {}` | ✅ Yes | Exception is handled |
+| `try {}` followed by `finally {}` | ✅ Yes | Ensures cleanup after `try` |
+| `try {}` followed by both `catch {}` and `finally {}` | ✅ Yes | Handles exceptions and ensures cleanup |
+
+---
+
+## **Final Takeaway**
+🚀 **A `try` block must be followed by either `catch` or `finally`, or both.**  
+❌ **A standalone `try` block is NOT allowed in Java.**  
+
+Would you like more details on **try-with-resources** as an alternative? 😊
+
+
+# **Can We Write Statements Between `try`, `catch`, or `finally` Blocks in Java?**  
+No, **you cannot write any statements** between a `try`, `catch`, or `finally` block. If you attempt to do so, Java will throw a **compilation error**.
+
+---
+
+## **1. Example: Invalid Code (Statement Between `try` and `catch`)**
+```java
+public class InvalidTryCatch {
+    public static void main(String[] args) {
+        try {
+            System.out.println("Inside try block");
+        }
+        System.out.println("This statement is outside the try block!"); // ❌ Compilation Error
+        catch (Exception e) {
+            System.out.println("Inside catch block");
+        }
+    }
+}
+```
+❌ **Compilation Error:**
+```
+error: 'catch' without 'try'
+```
+🔹 **Why?** You cannot have a statement between `try` and `catch`.  
+
+---
+
+## **2. Example: Invalid Code (Statement Between `catch` and `finally`)**
+```java
+public class InvalidTryFinally {
+    public static void main(String[] args) {
+        try {
+            System.out.println("Inside try block");
+        } catch (Exception e) {
+            System.out.println("Inside catch block");
+        }
+        System.out.println("Statement between catch and finally"); // ❌ Compilation Error
+        finally {
+            System.out.println("Inside finally block");
+        }
+    }
+}
+```
+❌ **Compilation Error:**
+```
+error: 'finally' without 'try'
+```
+🔹 **Why?** The `finally` block must directly follow the `catch` block.
+
+---
+
+## **3. Valid Code: No Statements Between `try`, `catch`, and `finally`**
+### ✅ **Example: Correct Usage**
+```java
+public class ValidTryCatchFinally {
+    public static void main(String[] args) {
+        try {
+            System.out.println("Inside try block");
+        } catch (Exception e) {
+            System.out.println("Inside catch block");
+        } finally {
+            System.out.println("Inside finally block");
+        }
+        // Statements after the entire try-catch-finally block are allowed.
+        System.out.println("Execution continues normally...");
+    }
+}
+```
+**Output:**
+```
+Inside try block
+Inside finally block
+Execution continues normally...
+```
+✅ **Java allows statements only after the entire `try-catch-finally` block.**
+
+---
+
+## **4. Why Does Java Enforce This Rule?**
+1. **Ensures Structured Exception Handling** – `try`, `catch`, and `finally` must form a **continuous** block.
+2. **Prevents Confusion** – No ambiguity about which `catch` or `finally` belongs to which `try`.
+3. **Maintains Readability** – Having unrelated code between these blocks makes debugging difficult.
+
+---
+
+## **5. Summary Table**
+| **Scenario** | **Valid?** | **Reason** |
+|-------------|-----------|------------|
+| `try {}` followed by a **statement**, then `catch {}` | ❌ No | `catch` must immediately follow `try`. |
+| `catch {}` followed by a **statement**, then `finally {}` | ❌ No | `finally` must immediately follow `catch`. |
+| **Statements inside** `try` or `catch` | ✅ Yes | Allowed. |
+| **Statements after the entire try-catch-finally block** | ✅ Yes | Allowed. |
+
+---
+
+## **Final Takeaway**
+🚀 **You CANNOT insert statements between `try`, `catch`, and `finally`.**  
+✅ **You CAN place statements inside these blocks or after the entire structure.**  
+
+Would you like more examples on exception handling best practices? 😊
+
+# **Does the Remaining Code in a `try` Block Execute After an Exception Occurs?**  
+No, once an **exception occurs** in a `try` block, **the remaining statements in that block are skipped**, and execution **jumps directly to the corresponding `catch` block** (if present) or the `finally` block.
+
+---
+
+## **1. Example: Code After Exception is Skipped**
+```java
+public class TryBlockExecution {
+    public static void main(String[] args) {
+        try {
+            System.out.println("Statement 1: Start of try block");
+            int result = 10 / 0;  // ❌ Exception occurs here (ArithmeticException)
+            System.out.println("Statement 2: This will NOT execute");
+        } catch (ArithmeticException e) {
+            System.out.println("Exception caught: " + e.getMessage());
+        }
+        System.out.println("Statement 3: Outside try-catch block");
+    }
+}
+```
+### **Output:**
+```
+Statement 1: Start of try block
+Exception caught: / by zero
+Statement 3: Outside try-catch block
+```
+🔹 **Observation:**  
+- **"Statement 2" is never executed** because an exception occurred before it.
+- **Control immediately jumps to the `catch` block**.
+- Execution resumes **after the `catch` block**.
+
+---
+
+## **2. If No Exception Occurs, Remaining Statements Execute Normally**
+If **no exception occurs**, all statements in the `try` block execute **normally**.
+
+```java
+public class TryBlockWithoutException {
+    public static void main(String[] args) {
+        try {
+            System.out.println("Statement 1: Start of try block");
+            int result = 10 / 2;  // ✅ No exception occurs
+            System.out.println("Statement 2: This WILL execute");
+        } catch (ArithmeticException e) {
+            System.out.println("Exception caught: " + e.getMessage());
+        }
+        System.out.println("Statement 3: Outside try-catch block");
+    }
+}
+```
+### **Output:**
+```
+Statement 1: Start of try block
+Statement 2: This WILL execute
+Statement 3: Outside try-catch block
+```
+🔹 **Observation:**  
+- **All statements in `try` execute normally** because no exception occurs.
+
+---
+
+## **3. The `finally` Block Always Executes**
+Even if an exception occurs and remaining statements in `try` are skipped, the `finally` block **always executes**.
+
+```java
+public class TryWithFinally {
+    public static void main(String[] args) {
+        try {
+            System.out.println("Statement 1: Start of try block");
+            int result = 10 / 0;  // ❌ Exception occurs
+            System.out.println("Statement 2: This will NOT execute");
+        } catch (ArithmeticException e) {
+            System.out.println("Exception caught: " + e.getMessage());
+        } finally {
+            System.out.println("Statement 3: Finally block executed");
+        }
+        System.out.println("Statement 4: Outside try-catch-finally block");
+    }
+}
+```
+### **Output:**
+```
+Statement 1: Start of try block
+Exception caught: / by zero
+Statement 3: Finally block executed
+Statement 4: Outside try-catch-finally block
+```
+🔹 **Observation:**  
+- **"Statement 2" is skipped** due to an exception.
+- **`finally` always executes**, even though an exception occurred.
+
+---
+
+## **4. Summary Table**
+| **Scenario** | **Does Remaining Code in `try` Execute?** |
+|-------------|----------------------------------|
+| No exception occurs | ✅ Yes, all statements execute normally |
+| Exception occurs in the middle of `try` | ❌ No, execution jumps to `catch` or `finally` |
+| `finally` block present | ✅ Yes, `finally` executes no matter what |
+| Exception occurs, but no `catch` block | ❌ No, program crashes unless `finally` is used |
+
+---
+
+## **5. Final Takeaway**
+🚀 **Once an exception occurs, remaining statements in `try` are skipped, and execution jumps to `catch` or `finally`.**  
+✅ **Use `finally` for important cleanup tasks since it always executes.**  
+
+Would you like more examples on exception handling best practices? 😊
+
+
+# **What Is the Difference Between Throw and Throws Keywords in Exception Handling in java?**
+### **Difference Between `throw` and `throws` in Java Exception Handling**  
+
+In Java, `throw` and `throws` are **both used for exception handling**, but they serve different purposes.
+
+---
+
+## **Key Differences Between `throw` and `throws`**
+| **Feature** | **`throw`** | **`throws`** |
+|------------|------------|-------------|
+| **Purpose** | Used to **explicitly throw** an exception | Used to **declare** exceptions a method can throw |
+| **Usage** | Inside a method or block | In method signature |
+| **Type** | Throws a **single** exception | Declares **one or multiple** exceptions |
+| **Follows by** | An instance of `Throwable` (Exception or Error) | Exception class names |
+| **Can Handle Exception?** | No, it just throws the exception | No, it only informs that the method can throw exceptions |
+| **Execution Impact** | Interrupts normal flow of execution | Does not impact execution unless an exception is thrown |
+
+---
+
+## **1. `throw` – Used to Explicitly Throw an Exception**
+- The `throw` keyword is **used inside a method** to **manually throw an exception**.
+- We must pass an **exception object** after `throw`.
+
+### ✅ **Example: Using `throw` to Throw an Exception**
+```java
+public class ThrowExample {
+    public static void checkAge(int age) {
+        if (age < 18) {
+            throw new IllegalArgumentException("Age must be 18 or above.");
+        }
+        System.out.println("Access granted.");
+    }
+
+    public static void main(String[] args) {
+        checkAge(16); // Throws exception
+    }
+}
+```
+### **Output:**
+```
+Exception in thread "main" java.lang.IllegalArgumentException: Age must be 18 or above.
+```
+🔹 **Since `throw` was used, execution stops immediately when the exception is thrown.**
+
+---
+
+## **2. `throws` – Used to Declare Exceptions in Method Signature**
+- The `throws` keyword is **used in method declarations** to indicate that the method **may throw exceptions**.
+- It **does not** handle exceptions itself, only informs the caller.
+
+### ✅ **Example: Using `throws` to Declare Exceptions**
+```java
+import java.io.*;
+
+public class ThrowsExample {
+    public static void readFile() throws IOException {
+        FileReader file = new FileReader("nonexistent.txt"); // May throw IOException
+        BufferedReader br = new BufferedReader(file);
+    }
+
+    public static void main(String[] args) {
+        try {
+            readFile();
+        } catch (IOException e) {
+            System.out.println("Exception caught: " + e.getMessage());
+        }
+    }
+}
+```
+### **Output:**
+```
+Exception caught: nonexistent.txt (No such file or directory)
+```
+🔹 **The `throws` keyword just declares that `readFile()` may throw an `IOException`, but handling is done in `main()`.**
+
+---
+
+## **3. Can We Use `throw` and `throws` Together?**
+Yes! A method can use `throws` to declare exceptions and use `throw` inside to trigger them.
+
+### ✅ **Example: `throw` and `throws` Together**
+```java
+public class ThrowThrowsExample {
+    public static void checkNumber(int number) throws ArithmeticException {
+        if (number < 0) {
+            throw new ArithmeticException("Negative numbers not allowed!");
+        }
+        System.out.println("Valid number: " + number);
+    }
+
+    public static void main(String[] args) {
+        try {
+            checkNumber(-5);
+        } catch (ArithmeticException e) {
+            System.out.println("Exception caught: " + e.getMessage());
+        }
+    }
+}
+```
+### **Output:**
+```
+Exception caught: Negative numbers not allowed!
+```
+🔹 **Here, `throw` is used to throw an `ArithmeticException`, and `throws` informs that the method may throw this exception.**
+
+---
+
+## **4. Summary Table**
+| **Feature** | **`throw`** | **`throws`** |
+|------------|------------|-------------|
+| **Definition** | Used to **explicitly throw** an exception inside a method | Used to **declare** exceptions a method might throw |
+| **Placement** | Inside a method | In method signature |
+| **Followed by** | An exception object (`throw new Exception()`) | Exception class names (`throws IOException`) |
+| **Number of Exceptions** | Only **one** exception at a time | Can declare **multiple** exceptions |
+| **Exception Handling?** | Does **not** handle exceptions, only throws | Does **not** handle exceptions, only declares |
+| **Example** | `throw new ArithmeticException("Error")` | `public void method() throws IOException` |
+
+---
+
+## **5. Final Takeaway**
+🚀 **`throw` is used to manually throw exceptions inside a method.**  
+🚀 **`throws` is used to declare that a method might throw exceptions.**  
+✅ **Use `throw` when you want to trigger an exception.**  
+✅ **Use `throws` when your method does not handle exceptions but wants the caller to handle them.**
+
+Would you like more examples or real-world use cases? 😊
+
+
+# **What Happens When an Exception Is Thrown by the `main()` Method?**  
+
+If an **exception is thrown from the `main()` method** and is **not caught**, the Java Virtual Machine (JVM) handles it by:  
+1. **Printing the exception details** (exception type, message, and stack trace).  
+2. **Terminating the program immediately** (unless there are other non-daemon threads running).  
+
+---
+
+## **1. Example: Uncaught Exception in `main()`**
+```java
+public class MainExceptionExample {
+    public static void main(String[] args) {
+        System.out.println("Before exception");
+        int result = 10 / 0; // Throws ArithmeticException
+        System.out.println("After exception"); // ❌ This line is never executed
+    }
+}
+```
+### **Output (JVM Terminates)**
+```
+Before exception
+Exception in thread "main" java.lang.ArithmeticException: / by zero
+	at MainExceptionExample.main(MainExceptionExample.java:4)
+```
+🔹 **Explanation:**
+- `"Before exception"` is printed.
+- The **exception occurs at line 4** (`10 / 0`).
+- `"After exception"` is **never printed** because **the program crashes immediately**.
+- **The JVM prints the stack trace** and terminates execution.
+
+---
+
+## **2. Handling the Exception in `main()`**
+To prevent program termination, handle the exception using a `try-catch` block.
+
+```java
+public class MainExceptionHandled {
+    public static void main(String[] args) {
+        System.out.println("Before exception");
+        try {
+            int result = 10 / 0; // Exception occurs
+        } catch (ArithmeticException e) {
+            System.out.println("Exception caught: " + e.getMessage());
+        }
+        System.out.println("After exception"); // ✅ Now this line executes
+    }
+}
+```
+### **Output (Handled Exception)**
+```
+Before exception
+Exception caught: / by zero
+After exception
+```
+🔹 **Explanation:**
+- The `catch` block **handles the exception**, so `"After exception"` **is printed**.
+- **The program continues execution normally**.
+
+---
+
+## **3. What If `throws` is Used in `main()`?**
+The `throws` keyword **declares** that `main()` **may throw an exception**, but it does not handle it.
+
+```java
+public class MainThrowsExample {
+    public static void main(String[] args) throws ArithmeticException {
+        System.out.println("Before exception");
+        int result = 10 / 0; // Exception occurs
+        System.out.println("After exception"); // ❌ Never executes
+    }
+}
+```
+### **Output (Same as Uncaught Exception)**
+```
+Before exception
+Exception in thread "main" java.lang.ArithmeticException: / by zero
+	at MainThrowsExample.main(MainThrowsExample.java:4)
+```
+🔹 **Even though `throws ArithmeticException` is used, the exception is still unhandled and causes program termination.**
+
+✅ **Solution:** Handle the exception inside `main()` using `try-catch`.
+
+---
+
+## **4. What If Another Thread is Running?**
+If `main()` throws an exception but **another thread is running**, the JVM **won't terminate immediately** until all non-daemon threads finish.
+
+### ✅ **Example: Main Thread Throws an Exception, But Another Thread is Running**
+```java
+public class MainThreadExample {
+    public static void main(String[] args) {
+        Thread t = new Thread(() -> {
+            try {
+                Thread.sleep(2000);
+                System.out.println("Other thread still running...");
+            } catch (InterruptedException e) {
+                System.out.println("Thread interrupted.");
+            }
+        });
+        t.start();
+
+        System.out.println("Before exception in main");
+        int result = 10 / 0; // Exception in main
+        System.out.println("After exception in main"); // ❌ Never executes
+    }
+}
+```
+### **Output:**
+```
+Before exception in main
+Exception in thread "main" java.lang.ArithmeticException: / by zero
+	at MainThreadExample.main(MainThreadExample.java:11)
+Other thread still running...
+```
+🔹 **Even though `main()` crashed, the other thread continued execution.**
+
+---
+
+## **5. Summary Table**
+| **Scenario** | **What Happens?** |
+|-------------|------------------|
+| **Exception in `main()`, no handling** | JVM prints stack trace and **terminates the program**. |
+| **Exception in `main()`, handled with `try-catch`** | **Exception is caught**, program continues execution. |
+| **Exception in `main()`, using `throws`** | JVM still crashes **unless handled elsewhere**. |
+| **Other threads running** | `main()` crashes, but other **non-daemon threads keep running**. |
+
+---
+
+## **6. Final Takeaway**
+🚀 **If `main()` throws an uncaught exception, JVM prints an error and terminates the program.**  
+✅ **To prevent crashes, always use `try-catch` inside `main()`.**  
+✅ **Daemon threads stop when `main()` exits, but non-daemon threads keep running.**  
+
+Would you like examples of handling multiple exceptions in `main()`? 😊
+
+
+
+# **What is an Unreachable Catch Block Error in Java?**  
+An **"Unreachable catch block"** error occurs when **a catch block will never be executed** because a previous catch block has already caught a **superclass exception** or when no exception can reach that block.
+
+This is a **compile-time error** and happens due to incorrect ordering of `catch` blocks or unnecessary exception handling.
+
+---
+
+## **1. Example: Catch Block Ordering Issue**
+If a **superclass exception** is caught before a **subclass exception**, the subclass `catch` block **becomes unreachable**.
+
+🔴 **Incorrect Code (Leads to Compilation Error)**
+```java
+public class UnreachableCatchExample {
+    public static void main(String[] args) {
+        try {
+            int result = 10 / 0; // Throws ArithmeticException
+        } catch (Exception e) {  // ✅ Catches all exceptions (superclass)
+            System.out.println("General Exception caught");
+        } catch (ArithmeticException e) { // ❌ This block is unreachable
+            System.out.println("Arithmetic Exception caught");
+        }
+    }
+}
+```
+### **Compilation Error:**
+```
+error: exception ArithmeticException has already been caught
+```
+🔹 **Why?**
+- `Exception` is the **superclass of all exceptions**.
+- Since it catches **all exceptions**, the `ArithmeticException` block **will never execute**.
+
+✅ **Fix: Catch Specific Exceptions First**
+```java
+public class ReachableCatchExample {
+    public static void main(String[] args) {
+        try {
+            int result = 10 / 0;
+        } catch (ArithmeticException e) { // ✅ Specific exception first
+            System.out.println("Arithmetic Exception caught");
+        } catch (Exception e) { // ✅ General exception last
+            System.out.println("General Exception caught");
+        }
+    }
+}
+```
+### **Output:**
+```
+Arithmetic Exception caught
+```
+
+---
+
+## **2. Example: Catch Block for an Exception That Never Occurs**
+A `catch` block that **handles an exception that can never be thrown** results in an **unreachable catch block**.
+
+🔴 **Incorrect Code (Unreachable Catch)**
+```java
+public class InvalidCatchExample {
+    public static void main(String[] args) {
+        try {
+            System.out.println("No exception here");
+        } catch (IOException e) { // ❌ Unreachable: No I/O operations in try
+            System.out.println("IOException caught");
+        }
+    }
+}
+```
+### **Compilation Error:**
+```
+error: exception IOException is never thrown in the corresponding try block
+```
+🔹 **Why?**
+- `IOException` is checked, but the `try` block does **not perform any I/O operations**, so it **can never throw `IOException`**.
+
+✅ **Fix: Use the Correct Exception Type**
+```java
+import java.io.*;
+
+public class ValidCatchExample {
+    public static void main(String[] args) {
+        try {
+            FileReader file = new FileReader("test.txt"); // Might throw IOException
+        } catch (IOException e) { // ✅ Now this catch block is reachable
+            System.out.println("IOException caught");
+        }
+    }
+}
+```
+
+---
+
+## **3. Summary Table**
+| **Cause of Unreachable Catch Block** | **Why it Happens?** | **How to Fix It?** |
+|----------------------------------|------------------------|-------------------|
+| Catching `Exception` before a specific exception | The superclass exception catches everything first. | Place specific exceptions **before** general ones. |
+| Catching an exception that is never thrown | The `try` block never throws the specified exception. | Ensure the `try` block contains code that can throw that exception. |
+
+---
+
+## **4. Final Takeaway**
+🚀 **Always place specific exceptions before general ones (`catch ArithmeticException` before `catch Exception`).**  
+🚀 **Only catch exceptions that can actually occur in the `try` block.**  
+
+Would you like a deep dive into exception handling best practices? 😊
+
+
+# **What is Type Promotion in Java?**  
+**Type promotion** in Java refers to the automatic conversion of **smaller data types** (like `byte`, `short`, `char`) into **larger data types** (`int`, `long`, `float`, `double`) **during arithmetic operations** to prevent data loss.  
+
+✅ **Java promotes smaller types to a larger type automatically when performing operations.**  
+✅ **Type promotion helps maintain data integrity and prevents overflow.**
+
+---
+
+## **1. Type Promotion in Arithmetic Operations**
+When an arithmetic operation involves different data types, Java **promotes** the smaller type to a larger type **automatically**.
+
+### ✅ **Example: Promotion to `int`**
+```java
+public class TypePromotionExample {
+    public static void main(String[] args) {
+        byte a = 10;
+        byte b = 20;
+        byte sum = (byte) (a + b); // Explicit cast required
+
+        System.out.println("Sum: " + sum);
+    }
+}
+```
+### **Explanation:**
+- `byte` (`a` and `b`) is **promoted to `int`** during the addition.
+- Since `int` cannot be assigned to `byte` directly, **explicit casting** (`(byte)`) is required.
+
+---
+
+## **2. Type Promotion in Expressions**
+Java promotes smaller types to larger types when **operands of different types** are used in an expression.
+
+### ✅ **Example: Mixed-Type Arithmetic**
+```java
+public class TypePromotionExample {
+    public static void main(String[] args) {
+        byte b = 10;
+        int i = 20;
+        float f = 5.5f;
+        double d = 30.5;
+
+        double result = b + i + f + d; // byte → int → float → double
+        System.out.println("Result: " + result);
+    }
+}
+```
+### **Output:**
+```
+Result: 66.0
+```
+### **Explanation:**
+1. `byte` (`b`) is promoted to `int`
+2. `int` is promoted to `float`
+3. `float` is promoted to `double`
+4. **Final result is `double`**
+
+---
+
+## **3. Type Promotion in Method Overloading**
+When multiple overloaded methods exist, **Java promotes the argument to the nearest larger data type** if an exact match is not found.
+
+### ✅ **Example: Method Overloading and Type Promotion**
+```java
+class PromotionExample {
+    void display(int a) {
+        System.out.println("int method: " + a);
+    }
+
+    void display(double a) {
+        System.out.println("double method: " + a);
+    }
+
+    public static void main(String[] args) {
+        PromotionExample obj = new PromotionExample();
+        obj.display(5);   // Calls int method
+        obj.display(5.5); // Calls double method
+        obj.display('A'); // 'A' (char) is promoted to int
+    }
+}
+```
+### **Output:**
+```
+int method: 5
+double method: 5.5
+int method: 65
+```
+🔹 **`char` ('A') is promoted to `int` (ASCII 65) and calls the `int` method.**
+
+---
+
+## **4. Type Promotion in Conditional Expressions**
+When using **ternary operators (`?:`)** or expressions involving mixed types, **promotion happens automatically**.
+
+### ✅ **Example: Type Promotion in Ternary Operator**
+```java
+public class TernaryTypePromotion {
+    public static void main(String[] args) {
+        byte b = 10;
+        int i = 20;
+        
+        // byte is promoted to int automatically
+        int result = (b > i) ? b : i; 
+
+        System.out.println("Result: " + result);
+    }
+}
+```
+### **Output:**
+```
+Result: 20
+```
+🔹 **Here, `b` is promoted to `int` before the comparison.**
+
+---
+
+## **5. Type Promotion Rules in Java**
+### ✅ **Rule 1: byte, short, and char are promoted to `int` when used in expressions**
+```java
+byte b = 5;
+short s = 10;
+char c = 'A';
+
+int result = b + s + c; // All promoted to int
+```
+---
+
+### ✅ **Rule 2: If one operand is `long`, the result is `long`.**
+```java
+int i = 10;
+long l = 20L;
+long res = i + l; // int is promoted to long
+```
+---
+
+### ✅ **Rule 3: If one operand is `float`, the result is `float`.**
+```java
+int i = 10;
+float f = 5.5f;
+float res = i + f; // int promoted to float
+```
+---
+
+### ✅ **Rule 4: If one operand is `double`, the result is `double`.**
+```java
+float f = 5.5f;
+double d = 10.5;
+double res = f + d; // float promoted to double
+```
+---
+
+## **6. Summary Table**
+| **Operation** | **Result Type** | **Example** |
+|--------------|---------------|------------|
+| `byte + short` | `int` | `(byte)5 + (short)10 → int` |
+| `char + int` | `int` | `'A' + 5 → int (65 + 5 = 70)` |
+| `int + long` | `long` | `10 + 20L → long` |
+| `long + float` | `float` | `20L + 5.5f → float` |
+| `float + double` | `double` | `5.5f + 10.5 → double` |
+
+---
+
+## **7. Final Takeaway**
+🚀 **Type promotion helps in automatic conversion of smaller data types to larger ones during operations.**  
+✅ **Prevents data loss and maintains accuracy in calculations.**  
+✅ **Java follows strict promotion rules to ensure consistency.**  
+
+Would you like to see real-world examples of type promotion in Java? 😊
+
+
+# **Why Java 8? What Was the Main Agenda Behind Java 8?**  
+
+Java 8, released in **March 2014**, was one of the most significant updates to Java. It introduced **functional programming, improved performance, and modern API enhancements** to make Java more expressive, efficient, and suitable for multi-core processing.
+
+---
+
+## **1. Main Agenda Behind Java 8**
+| **Objective** | **Why It Was Needed?** |
+|--------------|---------------------|
+| **Enhance Productivity** | Reduce boilerplate code with **Lambda Expressions**. |
+| **Enable Functional Programming** | Introduce **Streams API**, **Functional Interfaces**, and **Method References**. |
+| **Improve Performance** | Optimize **Garbage Collection (GC)** and **lazy evaluation in Streams**. |
+| **Better Multithreading Support** | Introduce **parallel streams** for multi-core processors. |
+| **Improve Date and Time Handling** | Replace outdated `java.util.Date` with **Java Time API** (`java.time`). |
+| **Improve Security** | Add features like **TLS 1.2, Secure Random Number Generators**, etc. |
+| **Enhance Developer Experience** | Introduce **Default and Static Methods in Interfaces**. |
+
+---
+
+## **2. Key Features of Java 8**
+### **🔹 1. Lambda Expressions – Functional Style Coding**
+Java 8 introduced **Lambda Expressions**, allowing **concise and readable** code.
+
+✅ **Before Java 8 (Anonymous Class)**  
+```java
+new Thread(new Runnable() {
+    @Override
+    public void run() {
+        System.out.println("Thread Running...");
+    }
+}).start();
+```
+✅ **Java 8 Lambda Expression (More Concise)**
+```java
+new Thread(() -> System.out.println("Thread Running...")).start();
+```
+🚀 **Benefit:** Reduces boilerplate code and improves readability.
+
+---
+
+### **🔹 2. Stream API – Efficient Data Processing**
+The **Streams API** allows developers to process collections **in a functional style**.
+
+✅ **Before Java 8 (Using Loops)**  
+```java
+List<String> names = Arrays.asList("John", "Jane", "Jack");
+for (String name : names) {
+    if (name.startsWith("J")) {
+        System.out.println(name);
+    }
+}
+```
+✅ **Java 8 Streams (More Concise)**
+```java
+names.stream()
+     .filter(name -> name.startsWith("J"))
+     .forEach(System.out::println);
+```
+🚀 **Benefit:** Improves performance using **lazy evaluation and parallel processing**.
+
+---
+
+### **🔹 3. Default and Static Methods in Interfaces**
+Before Java 8, **interfaces couldn't have method implementations**. Java 8 allows **default and static methods** inside interfaces.
+
+✅ **Example: Default Method**
+```java
+interface Vehicle {
+    default void start() {
+        System.out.println("Vehicle is starting...");
+    }
+}
+
+class Car implements Vehicle {}
+
+public class Main {
+    public static void main(String[] args) {
+        Car car = new Car();
+        car.start(); // Calls default method from Vehicle interface
+    }
+}
+```
+🚀 **Benefit:** Avoids breaking existing implementations when adding new methods to interfaces.
+
+---
+
+### **🔹 4. New Date & Time API (`java.time`)**
+Java 8 replaced the **outdated `java.util.Date` API** with the **more powerful `java.time` API**.
+
+✅ **Before Java 8 (Old `Date` API)**  
+```java
+Date date = new Date();
+System.out.println(date);  // Hard to format and manipulate
+```
+✅ **Java 8 (`java.time` API)**
+```java
+LocalDate today = LocalDate.now();
+System.out.println(today);  // Output: 2024-02-10
+```
+🚀 **Benefit:** More readable, **immutable**, and thread-safe.
+
+---
+
+### **🔹 5. Functional Interfaces (`java.util.function` Package)**
+Java 8 introduced built-in **functional interfaces** to support **functional programming**.
+
+✅ **Example: Using `Predicate` (Functional Interface)**
+```java
+Predicate<Integer> isEven = num -> num % 2 == 0;
+System.out.println(isEven.test(10)); // true
+System.out.println(isEven.test(7));  // false
+```
+🚀 **Benefit:** Makes Java more functional and expressive.
+
+---
+
+### **🔹 6. Optional – Avoiding `NullPointerException`**
+The `Optional` class **helps prevent `NullPointerException`**.
+
+✅ **Example: Using `Optional` to Handle Nulls**
+```java
+Optional<String> name = Optional.ofNullable(null);
+System.out.println(name.orElse("Default Name")); // Output: Default Name
+```
+🚀 **Benefit:** Avoids null checks and improves code safety.
+
+---
+
+## **3. Summary – Why Java 8?**
+| **Feature** | **Why It Was Introduced?** | **Benefit** |
+|------------|--------------------------|------------|
+| **Lambda Expressions** | Reduce boilerplate code | Improves readability and conciseness |
+| **Stream API** | Functional data processing | Faster and efficient collection handling |
+| **Default Methods in Interfaces** | Improve backward compatibility | Avoid breaking changes in interfaces |
+| **New Date-Time API** | Replace outdated `Date` API | Thread-safe, immutable date handling |
+| **Functional Interfaces** | Enable functional programming | More expressive and reusable code |
+| **Optional Class** | Avoid `NullPointerException` | Safer and more readable null handling |
+
+---
+
+## **4. Final Takeaway**
+🚀 **Java 8 modernized Java by introducing functional programming, performance improvements, and API enhancements.**  
+✅ **It reduces boilerplate code, improves efficiency, and makes Java more expressive.**  
+
+Would you like to explore real-world use cases of Java 8 features? 😊
+
+# **What are the new features which got introduced in java 8?**
+### **New Features Introduced in Java 8**  
+
+Java 8 was released in **March 2014** and introduced major improvements, including **functional programming, Stream API, and performance enhancements**. These features made Java more **concise, efficient, and modern**.
+
+---
+
+## **1. Lambda Expressions (Functional Programming)**
+Lambda expressions allow writing **inline functions** in a more readable and concise way.
+
+✅ **Before Java 8 (Anonymous Class)**
+```java
+new Thread(new Runnable() {
+    @Override
+    public void run() {
+        System.out.println("Thread is running...");
+    }
+}).start();
+```
+✅ **Java 8 Lambda Expression (More Concise)**
+```java
+new Thread(() -> System.out.println("Thread is running...")).start();
+```
+🚀 **Benefit:** Reduces boilerplate code and improves readability.
+
+---
+
+## **2. Stream API (Functional Data Processing)**
+The **Stream API** provides a functional way to process collections **efficiently**.
+
+✅ **Before Java 8 (Using Loops)**
+```java
+List<String> names = Arrays.asList("John", "Jane", "Jack");
+for (String name : names) {
+    if (name.startsWith("J")) {
+        System.out.println(name);
+    }
+}
+```
+✅ **Java 8 Streams (More Concise)**
+```java
+names.stream()
+     .filter(name -> name.startsWith("J"))
+     .forEach(System.out::println);
+```
+🚀 **Benefit:** Improves performance using **lazy evaluation and parallel processing**.
+
+---
+
+## **3. Default and Static Methods in Interfaces**
+Java 8 allows **default and static methods** inside interfaces, enabling **backward compatibility**.
+
+✅ **Example: Default Method**
+```java
+interface Vehicle {
+    default void start() {
+        System.out.println("Vehicle is starting...");
+    }
+}
+
+class Car implements Vehicle {}
+
+public class Main {
+    public static void main(String[] args) {
+        Car car = new Car();
+        car.start(); // Calls default method from Vehicle interface
+    }
+}
+```
+🚀 **Benefit:** Avoids breaking existing implementations when adding new methods.
+
+---
+
+## **4. New Date & Time API (`java.time` Package)**
+Java 8 introduced a **modern Date-Time API** to replace the **outdated `java.util.Date` API**.
+
+✅ **Example: Using `java.time` API**
+```java
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+public class DateTimeExample {
+    public static void main(String[] args) {
+        LocalDate today = LocalDate.now();
+        System.out.println("Today's Date: " + today);
+
+        LocalDateTime now = LocalDateTime.now();
+        System.out.println("Current Date and Time: " + now);
+    }
+}
+```
+🚀 **Benefit:** More readable, **immutable**, and thread-safe.
+
+---
+
+## **5. Functional Interfaces (`java.util.function` Package)**
+Java 8 introduced built-in **functional interfaces** for functional programming.
+
+✅ **Example: Using `Predicate` (Functional Interface)**
+```java
+import java.util.function.Predicate;
+
+public class FunctionalInterfaceExample {
+    public static void main(String[] args) {
+        Predicate<Integer> isEven = num -> num % 2 == 0;
+
+        System.out.println(isEven.test(10)); // true
+        System.out.println(isEven.test(7));  // false
+    }
+}
+```
+🚀 **Benefit:** Supports functional-style programming.
+
+---
+
+## **6. Optional Class (Avoiding `NullPointerException`)**
+The `Optional` class helps **handle null values safely**, avoiding `NullPointerException`.
+
+✅ **Example: Using `Optional` to Handle Nulls**
+```java
+import java.util.Optional;
+
+public class OptionalExample {
+    public static void main(String[] args) {
+        Optional<String> name = Optional.ofNullable(null);
+        System.out.println(name.orElse("Default Name")); // Output: Default Name
+    }
+}
+```
+🚀 **Benefit:** Avoids null checks and improves code safety.
+
+---
+
+## **7. Method References (Cleaner Code)**
+Method references (`::`) allow referencing existing methods in a **more concise way**.
+
+✅ **Example: Method Reference**
+```java
+import java.util.Arrays;
+import java.util.List;
+
+public class MethodReferenceExample {
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("John", "Jane", "Jack");
+
+        // Using Lambda
+        names.forEach(name -> System.out.println(name));
+
+        // Using Method Reference (More Concise)
+        names.forEach(System.out::println);
+    }
+}
+```
+🚀 **Benefit:** Makes code cleaner and more readable.
+
+---
+
+## **8. Collectors in Stream API**
+The `Collectors` utility helps **collect and manipulate** stream data efficiently.
+
+✅ **Example: Convert Stream to List**
+```java
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class CollectorsExample {
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("Alice", "Bob", "Charlie");
+
+        List<String> filteredNames = names.stream()
+                .filter(name -> name.startsWith("A"))
+                .collect(Collectors.toList());
+
+        System.out.println(filteredNames); // Output: [Alice]
+    }
+}
+```
+🚀 **Benefit:** Easy and efficient data collection.
+
+---
+
+## **9. Parallel Streams (Multi-Core Processing)**
+Java 8 introduced **parallel streams** to process collections **faster using multiple cores**.
+
+✅ **Example: Parallel Stream**
+```java
+import java.util.Arrays;
+import java.util.List;
+
+public class ParallelStreamExample {
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("Alice", "Bob", "Charlie");
+
+        names.parallelStream()
+             .forEach(name -> System.out.println(Thread.currentThread().getName() + " - " + name));
+    }
+}
+```
+🚀 **Benefit:** Improves performance using **multi-threading**.
+
+---
+
+## **10. Nashorn JavaScript Engine**
+Java 8 introduced **Nashorn**, a JavaScript engine for **executing JavaScript within Java applications**.
+
+✅ **Example: Running JavaScript in Java**
+```java
+import javax.script.*;
+
+public class NashornExample {
+    public static void main(String[] args) throws Exception {
+        ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+        engine.eval("print('Hello from JavaScript')");
+    }
+}
+```
+🚀 **Benefit:** Enables Java applications to execute JavaScript.
+
+---
+
+## **Summary – New Features in Java 8**
+| **Feature** | **Description** | **Benefit** |
+|------------|----------------|-------------|
+| **Lambda Expressions** | Functional-style anonymous functions | Concise and readable code |
+| **Stream API** | Process collections in a functional way | Faster and efficient |
+| **Default Methods in Interfaces** | Allow default implementations | Backward compatibility |
+| **New Date-Time API** | `java.time` replaces old Date API | Immutable, thread-safe |
+| **Functional Interfaces** | `Predicate`, `Consumer`, `Function`, etc. | Enables functional programming |
+| **Optional Class** | Avoids `NullPointerException` | Safer and cleaner code |
+| **Method References** | `::` operator to reference methods | Improves readability |
+| **Collectors Utility** | Collect stream data efficiently | Simplifies data collection |
+| **Parallel Streams** | Process collections in parallel | Uses multi-core CPUs |
+| **Nashorn JavaScript Engine** | Execute JavaScript within Java | Java-JavaScript integration |
+
+---
+
+## **Final Takeaway**
+🚀 **Java 8 revolutionized Java with functional programming, Stream API, and performance improvements.**  
+✅ **It reduced boilerplate code, improved efficiency, and made Java more expressive.**  
+
+Would you like real-world use cases for these features? 😊
