@@ -86,3 +86,107 @@
 84. What does a final method mean?
 85. Where can a blank final variable be initialized?
 86. Can a class be both final and abstract at the same time?
+
+## **Chapter 3: Strings in Java**
+
+### **1. Basics of Strings**
+1. **What is a String in Java?**
+2. **Why is String immutable in Java?**
+3. **What is the difference between `String`, `StringBuilder`, and `StringBuffer`?**
+4. **How is a String object created in Java?**
+5. **What is the difference between `String s = new String("abc")` and `String s = "abc"`?**
+6. **What is the String Pool in Java?**
+7. **How does the `intern()` method work in Java?**
+8. **What is the difference between `==` and `.equals()` when comparing Strings?**
+9. **How do you check if two Strings are equal in Java?**
+10. **What is the difference between `String.valueOf()` and `toString()`?**
+11. **How do you reverse a String in Java?**
+12. **How do you check if a String is a palindrome?**
+13. **How do you remove whitespace from a String in Java?**
+14. **How do you convert a String to uppercase or lowercase?**
+15. **How do you split a String in Java?**
+16. **How do you join multiple Strings in Java?**
+17. **How do you replace characters in a String?**
+18. **How do you check if a String contains only digits?**
+19. **How do you check if a String contains only alphabets?**
+20. **How do you count the number of words in a String?**
+21. **What is the purpose of the `charAt()` method in Java?**
+22. **What is the purpose of the `substring()` method in Java?**
+23. **What is the purpose of the `indexOf()` method in Java?**
+24. **What is the purpose of the `length()` method in Java?**
+25. **What is the purpose of the `trim()` method in Java?**
+26. **What is the purpose of the `replace()` method in Java?**
+27. **What is the purpose of the `startsWith()` and `endsWith()` methods in Java?**
+28. **What is the purpose of the `compareTo()` method in Java?**
+29. **What is the purpose of the `concat()` method in Java?**
+30. **What is the purpose of the `toCharArray()` method in Java?**
+31. **What is the difference between `StringBuilder` and `StringBuffer`?**
+32. **Why is `StringBuilder` faster than `StringBuffer`?**
+33. **How do you convert a String to an integer in Java?**
+34. **How do you convert an integer to a String in Java?**
+35. **How do you convert a String to a character array?**
+36. **How do you convert a character array to a String?**
+37. **How do you check if two Strings are anagrams?**
+38. **How do you find the first non-repeated character in a String?**
+39. **How do you find the most repeated character in a String?**
+40. **How do you count the occurrences of a character in a String?**
+41. **Why is String concatenation using `+` operator inefficient?**
+42. **How does `StringBuilder` improve performance over String concatenation?**
+43. **What is the memory overhead of using Strings in Java?**
+44. **How does the String Pool help in memory optimization?**
+45. **What is the impact of creating too many String objects in Java?**
+46. **How do you optimize String operations for performance?**
+47. **What is the difference between `StringBuilder` and `String` in terms of memory usage?**
+48. **How do you handle large Strings in Java?**
+49. **What is the impact of using `intern()` on memory?**
+50. **How do you avoid memory leaks with Strings?**
+51. **How do you validate an email address using a String in Java?**
+52. **How do you extract a substring from a URL?**
+53. **How do you parse a CSV file using Strings in Java?**
+54. **How do you handle multi-line Strings in Java?**
+55. **How do you compare two Strings ignoring case?**
+56. **How do you remove duplicate characters from a String?**
+57. **How do you find the longest substring without repeating characters?**
+58. **How do you check if a String is a valid number?**
+59. **How do you implement a custom `toString()` method for a class?**
+60. **How do you handle encoding and decoding of Strings in Java?**
+61. **What happens if you call `toString()` on a `null` String?**
+62. **What is the output of `"abc" == new String("abc")`?**
+63. **What is the output of `"abc".equals(new String("abc"))`?**
+64. **What is the output of `"abc".substring(0, 100)`?**
+65. **What is the output of `"abc".charAt(10)`?**
+66. **What is the output of `"abc".replace('a', 'A').replace('A', 'B')`?**
+67. **What is the output of `"abc".concat(null)`?**
+68. **What is the output of `"abc".toUpperCase().toLowerCase()`?**
+69. **What is the output of `"abc".equalsIgnoreCase("ABC")`?**
+70. **What is the output of `"abc".compareTo("def")`?**
+71. **Write a program to reverse a String without using `StringBuilder` or `StringBuffer`.**
+72. **Write a program to check if two Strings are anagrams.**
+73. **Write a program to find the first non-repeated character in a String.**
+74. **Write a program to count the number of vowels in a String.**
+75. **Write a program to remove all whitespace from a String.**
+76. **Write a program to check if a String is a palindrome.**
+77. **Write a program to find the longest palindrome in a String.**
+78. **Write a program to count the occurrences of each character in a String.**
+79. **Write a program to find the most repeated word in a String.**
+80. **Write a program to capitalize the first letter of each word in a String.**
+81. **When should you use `StringBuilder` instead of `String`?**
+82. **Why should you avoid using `+` for String concatenation in loops?**
+83. **How do you handle large String concatenation efficiently?**
+84. **What are the best practices for using the `intern()` method?**
+85. **How do you handle String encoding and decoding in Java?**
+86. **What are the best practices for comparing Strings in Java?**
+87. **How do you handle multi-line Strings in Java?**
+88. **What are the best practices for using `String.format()`?**
+89. **How do you handle String manipulation in multi-threaded environments?**
+90. **What are the best practices for using `StringTokenizer` vs `split()`?**
+91. **What is the difference between `String.format()` and `StringBuilder`?**
+92. **How do you handle String localization in Java?**
+93. **What is the difference between `String.getBytes()` and `String.toCharArray()`?**
+94. **How do you handle String compression in Java?**
+95. **What is the difference between `String` and `CharSequence`?**
+96. **How do you handle String encryption and decryption in Java?**
+97. **What is the difference between `String` and `StringBuffer` in terms of thread safety?**
+98. **How do you handle String manipulation in functional programming?**
+99. **What is the difference between `String` and `StringBuilder` in terms of immutability?**
+100. **How do you handle String manipulation in Java 8 and above?**
