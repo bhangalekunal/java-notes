@@ -196,71 +196,51 @@
 
 1. **What are Generics in Java?**  
 2. **Why were Generics introduced in Java?**  
-3. **What is the difference between raw types and generic types?**  
-4. **What is type erasure in Generics?**  
-5. **What are the advantages of using Generics?**  
-6. **What is the difference between `List` and `List<Object>`?**  
-7. **What is the difference between `List<?>` and `List<Object>`?**  
-8. **What is the purpose of the diamond operator (`<>`) in Generics?**  
-9. **Can you use primitive types with Generics?**  
-10. **What is the difference between `List<String>` and `List<Integer>`?**  
+3. **What are the advantages of using Generics?**  
+4. **What is the difference between raw types and generic types?**  
+5. **Can you use primitive types with Generics?**  
+6. **What is type erasure in Generics?**  
+7. **How does type erasure work in Java?**  
+8. **What happens to generic type information at runtime?**  
+9. **Can you use `instanceof` with generic types?**  
+10. **What is reifiable and non-reifiable types in Generics?**  
 11. **How do you define a generic class in Java?**  
-12. **How do you define a generic interface in Java?**  
-13. **Can you create an instance of a generic type?**  
-14. **What is a bounded type parameter in Generics?**  
-15. **How do you define a bounded type parameter in a generic class?**  
-16. **What is the difference between `extends` and `super` in Generics?**  
-17. **Can you use multiple bounds in Generics?**  
-18. **What is the difference between `List<? extends Number>` and `List<? super Number>`?**  
-19. **How do you create a generic method in Java?**  
-20. **What is the difference between a generic class and a generic method?**  
+12. **How do you define a generic method in Java?**  
+13. **What is the difference between a generic class and a generic method?**  
+14. **Can you create an instance of a generic type?**  
+15. **How do you create a generic utility class in Java?**  
+16. **How do you handle type safety in a generic class?**  
+17. **How do you handle type safety in a generic method?**  
+18. **How do you define a generic interface in Java?**  
+19. **How do you use Generics in collections like `ArrayList` and `HashMap`?**  
+20. **What is the purpose of the diamond operator (`<>`) in Generics?**  
 21. **What is a wildcard in Generics?**  
 22. **What is the difference between `List<?>` and `List<T>`?**  
 23. **What is the purpose of the upper-bounded wildcard (`<? extends T>`)?**  
 24. **What is the purpose of the lower-bounded wildcard (`<? super T>`)?**  
-25. **What is the difference between `List<? extends Number>` and `List<Number>`?**  
-26. **Can you add elements to a `List<?>`?**  
-27. **Can you add elements to a `List<? extends Number>`?**  
-28. **Can you add elements to a `List<? super Number>`?**  
+25. **What is the difference between `List<? extends Number>` and `List<? super Number>`?**  
+26. **What is a bounded type parameter in Generics?**  
+27. **How do you define a bounded type parameter in a generic class?**  
+28. **Can you use multiple bounds in Generics?**  
 29. **What is the difference between `List<?>` and `List<Object>`?**  
-30. **What is the difference between `List<? extends Number>` and `List<? super Number>`?**  
-31. **What is type erasure in Generics?**  
-32. **How does type erasure work in Java?**  
-33. **What happens to generic type information at runtime?**  
-34. **Can you use instanceof with generic types?**  
-35. **What is the difference between `List<String>` and `List<Integer>` at runtime?**  
-36. **How do you overcome the limitations of type erasure?**  
-37. **What is reifiable and non-reifiable types in Generics?**  
-38. **What is the difference between `List<String>` and `List<?>` at runtime?**  
-39. **Can you create an array of generic types?**  
-40. **What is the difference between `List<String>[]` and `List<?>[]`?**  
-41. **What is the difference between `List<?>` and `List<T>`?**  
-42. **What is the difference between `List<? extends T>` and `List<T>`?**  
-43. **What is the difference between `List<? super T>` and `List<T>`?**  
-44. **What is the difference between `List<?>` and `List<Object>`?**  
-45. **What is the difference between `List<? extends Number>` and `List<Number>`?**  
-46. **What is the difference between `List<? super Number>` and `List<Number>`?**  
-47. **What is the difference between `List<?>` and `List<? extends Object>`?**  
-48. **What is the difference between `List<?>` and `List<? super Object>`?**  
-49. **What is the difference between `List<?>` and `List<? extends Number>`?**  
-50. **What is the difference between `List<?>` and `List<? super Number>`?**  
-51. **How do you use Generics in collections like `ArrayList` and `HashMap`?**  
-52. **How do you create a generic utility class in Java?**  
-53. **How do you handle type safety in a generic class?**  
-54. **How do you handle type safety in a generic method?**  
-55. **How do you handle type safety in a generic interface?**  
-56. **How do you handle type safety in a generic constructor?**  
-57. **How do you handle type safety in a generic static method?**  
-58. **How do you handle type safety in a generic enum?**  
-59. **How do you handle type safety in a generic annotation?**  
-60. **How do you handle type safety in a generic lambda expression?**  
-61. **When should you use Generics in Java?**  
-62. **What are the best practices for using Generics in Java?**  
-63. **How do you handle type safety in Generics?**  
-64. **What are the best practices for using wildcards in Generics?**  
-65. **How do you handle type erasure in Generics?**  
-66. **What are the best practices for using bounded type parameters in Generics?**  
-67. **How do you handle type safety in generic methods?**  
-68. **What are the best practices for using generic classes?**  
-69. **How do you handle type safety in generic interfaces?**  
-70. **What are the best practices for using generic constructors?**  
+30. **What is the difference between `List<? extends Number>` and `List<Number>`?**  
+31. **What is the difference between `List<? super Number>` and `List<Number>`?**  
+32. **What is the difference between `List<String>` and `List<Integer>`?**  
+33. **What is the difference between `List<String>` and `List<?>` at runtime?**  
+34. **Can you add elements to a `List<?>`?**  
+35. **Can you add elements to a `List<? extends Number>`?**  
+36. **Can you add elements to a `List<? super Number>`?**  
+37. **Can you create an array of generic types?**  
+38. **What is the difference between `List<String>[]` and `List<?>[]`?**  
+39. **How do you overcome the limitations of type erasure?**  
+40. **What are the best practices for using Generics in Java?**  
+41. **What are the best practices for using wildcards in Generics?**  
+42. **What are the best practices for using bounded type parameters in Generics?**  
+43. **When should you use Generics in Java?**  
+44. **What is the difference between `extends` and `super` in Generics?**  
+45. **What are the best practices for using generic classes?**  
+46. **What are the best practices for using generic interfaces?**  
+47. **What are the best practices for using generic constructors?**  
+48. **How do you handle type safety in a generic interface?**  
+49. **How do you handle type safety in a generic constructor?**  
+50. **How do you handle type safety in a generic static method?**  
