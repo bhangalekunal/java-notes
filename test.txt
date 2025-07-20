@@ -1,0 +1,301 @@
+package com.codemaster.testlog.util;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class JPosMessageFormatter {
+
+    private static final String PLACEHOLDER = "{}";
+    private static final char PLACEHOLDER_START = '{';
+    private static final char ESCAPE_CHAR = '\\';
+    private static final String NULL_STRING = "null";
+    private static final String FAILED_TO_STRING = "Failed toString() method";
+    private static final String ELLIPSIS = "...";
+    private static final String ARRAY_START = "[";
+    private static final String ARRAY_END = "]";
+    private static final String ARRAY_SEPARATOR = ", ";
+    private static final int INITIAL_BUFFER_EXTRA_CAPACITY = 50;
+
+    private JPosMessageFormatter() {
+        // prevent instantiation
+    }
+
+    public static FormattedMsg formatMessage(String messagePattern, Object arg) {
+        return formatMessageWithArray(messagePattern, new Object[]{arg});
+    }
+
+    public static FormattedMsg formatMessage(String messagePattern, Object arg1, Object arg2) {
+        return formatMessageWithArray(messagePattern, new Object[]{arg1, arg2});
+    }
+
+    public static FormattedMsg formatMessageWithArray(String messagePattern, Object[] argArray) {
+        Throwable throwableCandidate = extractThrowableFromArguments(argArray);
+        Object[] args = argArray;
+        if (throwableCandidate != null) {
+            args = copyWithoutLastArg(argArray);
+        }
+
+        return formatMessageWithArray(messagePattern, args, throwableCandidate);
+    }
+
+    public static FormattedMsg formatMessageWithArray(String messagePattern, Object[] argArray, Throwable throwable) {
+        if (messagePattern == null) {
+            return new FormattedMsg(null, argArray, throwable);
+        } else if (argArray == null) {
+            return new FormattedMsg(messagePattern);
+        } else {
+            int currentPosition = 0;
+            StringBuilder builder = new StringBuilder(messagePattern.length() + INITIAL_BUFFER_EXTRA_CAPACITY);
+
+            for (int argIndex = 0; argIndex < argArray.length; ++argIndex) {
+                int placeholderPos = messagePattern.indexOf(PLACEHOLDER, currentPosition);
+                if (placeholderPos == -1) {
+                    if (currentPosition == 0) {
+                        return new FormattedMsg(messagePattern, argArray, throwable);
+                    }
+
+                    builder.append(messagePattern, currentPosition, messagePattern.length());
+                    return new FormattedMsg(builder.toString(), argArray, throwable);
+                }
+
+                if (isEscapedPlaceholder(messagePattern, placeholderPos)) {
+                    if (!isDoubleEscaped(messagePattern, placeholderPos)) {
+                        --argIndex;
+                        builder.append(messagePattern, currentPosition, placeholderPos - 1);
+                        builder.append(PLACEHOLDER_START);
+                        currentPosition = placeholderPos + 1;
+                    } else {
+                        builder.append(messagePattern, currentPosition, placeholderPos - 1);
+                        deeplyAppendParameter(builder, argArray[argIndex], new HashSet<>());
+                        currentPosition = placeholderPos + 2;
+                    }
+                } else {
+                    builder.append(messagePattern, currentPosition, placeholderPos);
+                    deeplyAppendParameter(builder, argArray[argIndex], new HashSet<>());
+                    currentPosition = placeholderPos + 2;
+                }
+            }
+
+            builder.append(messagePattern, currentPosition, messagePattern.length());
+            return new FormattedMsg(builder.toString(), argArray, throwable);
+        }
+    }
+
+
+    private static boolean isEscapedPlaceholder(String messagePattern, int delimeterStartIndex) {
+        return delimeterStartIndex != 0 && messagePattern.charAt(delimeterStartIndex - 1) == ESCAPE_CHAR;
+    }
+
+    private static boolean isDoubleEscaped(String messagePattern, int delimeterStartIndex) {
+        return delimeterStartIndex >= 2 && messagePattern.charAt(delimeterStartIndex - 2) == ESCAPE_CHAR;
+    }
+
+    private static void deeplyAppendParameter(StringBuilder builder, Object obj, Set<Object[]> seenSet) {
+        if (obj == null) {
+            builder.append(NULL_STRING);
+        } else {
+            if (!obj.getClass().isArray()) {
+                appendObject(builder, obj);
+            } else if (obj instanceof byte[]) {
+                appendByteArray(builder, (byte[]) obj);
+            } else if (obj instanceof short[]) {
+                appendShortArray(builder, (short[]) obj);
+            } else if (obj instanceof int[]) {
+                appendIntArray(builder, (int[]) obj);
+            } else if (obj instanceof long[]) {
+                appendLongArray(builder, (long[]) obj);
+            } else if (obj instanceof float[]) {
+                appendFloatArray(builder, (float[]) obj);
+            } else if (obj instanceof double[]) {
+                appendDoubleArray(builder, (double[]) obj);
+            } else if (obj instanceof char[]) {
+                appendCharArray(builder, (char[]) obj);
+            } else if (obj instanceof boolean[]) {
+                appendBooleanArray(builder, (boolean[]) obj);
+            } else {
+                appendObjectArray(builder, (Object[]) obj, seenSet);
+            }
+        }
+    }
+
+    private static void appendObject(StringBuilder builder, Object obj) {
+        try {
+            builder.append(obj.toString());
+        } catch (Throwable t) {
+            builder.append(FAILED_TO_STRING);
+        }
+
+    }
+
+    private static void appendByteArray(StringBuilder builder, byte[] array) {
+        builder.append(ARRAY_START);
+
+        for (int i = 0; i < array.length; ++i) {
+            builder.append(array[i]);
+            if (i != array.length - 1) {
+                builder.append(ARRAY_SEPARATOR);
+            }
+        }
+
+        builder.append(ARRAY_END);
+    }
+
+    private static void appendShortArray(StringBuilder builder, short[] array) {
+        builder.append(ARRAY_START);
+
+        for (int i = 0; i < array.length; ++i) {
+            builder.append(array[i]);
+            if (i != array.length - 1) {
+                builder.append(ARRAY_SEPARATOR);
+            }
+        }
+
+        builder.append(ARRAY_END);
+    }
+
+    private static void appendIntArray(StringBuilder builder, int[] array) {
+        builder.append(ARRAY_START);
+
+        for (int i = 0; i < array.length; ++i) {
+            builder.append(array[i]);
+            if (i != array.length - 1) {
+                builder.append(ARRAY_SEPARATOR);
+            }
+        }
+
+        builder.append(ARRAY_END);
+    }
+
+    private static void appendLongArray(StringBuilder builder, long[] array) {
+        builder.append(ARRAY_START);
+
+        for (int i = 0; i < array.length; ++i) {
+            builder.append(array[i]);
+            if (i != array.length - 1) {
+                builder.append(ARRAY_SEPARATOR);
+            }
+        }
+
+        builder.append(ARRAY_END);
+    }
+
+    private static void appendFloatArray(StringBuilder builder, float[] array) {
+        builder.append(ARRAY_START);
+
+        for (int i = 0; i < array.length; ++i) {
+            builder.append(array[i]);
+            if (i != array.length - 1) {
+                builder.append(ARRAY_SEPARATOR);
+            }
+        }
+
+        builder.append(ARRAY_END);
+    }
+
+    private static void appendDoubleArray(StringBuilder builder, double[] array) {
+        builder.append(ARRAY_START);
+
+        for (int i = 0; i < array.length; ++i) {
+            builder.append(array[i]);
+            if (i != array.length - 1) {
+                builder.append(ARRAY_SEPARATOR);
+            }
+        }
+
+        builder.append(ARRAY_END);
+    }
+
+    private static void appendCharArray(StringBuilder builder, char[] array) {
+        builder.append(ARRAY_START);
+
+        for (int i = 0; i < array.length; ++i) {
+            builder.append(array[i]);
+            if (i != array.length - 1) {
+                builder.append(ARRAY_SEPARATOR);
+            }
+        }
+
+        builder.append(ARRAY_END);
+    }
+
+    private static void appendBooleanArray(StringBuilder builder, boolean[] array) {
+        builder.append(ARRAY_START);
+
+        for (int i = 0; i < array.length; ++i) {
+            builder.append(array[i]);
+            if (i != array.length - 1) {
+                builder.append(ARRAY_SEPARATOR);
+            }
+        }
+
+        builder.append(ARRAY_END);
+    }
+
+    private static void appendObjectArray(StringBuilder builder, Object[] array, Set<Object[]> seenSet) {
+        builder.append(ARRAY_START);
+        if (!seenSet.contains(array)) {
+            seenSet.add(array);
+
+            for (int i = 0; i < array.length; ++i) {
+                deeplyAppendParameter(builder, array[i], seenSet);
+                if (i != array.length - 1) {
+                    builder.append(ARRAY_SEPARATOR);
+                }
+            }
+
+            seenSet.remove(array);
+        } else {
+            builder.append(ELLIPSIS);
+        }
+
+        builder.append(ARRAY_END);
+    }
+
+    public static Throwable extractThrowableFromArguments(Object[] argArray) {
+        if (argArray != null && argArray.length != 0) {
+            Object lastEntry = argArray[argArray.length - 1];
+            return lastEntry instanceof Throwable ? (Throwable) lastEntry : null;
+        } else {
+            return null;
+        }
+    }
+
+    public static Object[] copyWithoutLastArg(Object[] argArray) {
+        if (argArray != null && argArray.length != 0) {
+            int trimmedLen = argArray.length - 1;
+            Object[] trimmed = new Object[trimmedLen];
+            if (trimmedLen > 0) {
+                System.arraycopy(argArray, 0, trimmed, 0, trimmedLen);
+            }
+
+            return trimmed;
+        } else {
+            throw new IllegalStateException("Argument array must not be null or empty");
+        }
+    }
+
+}
+
+
+
+package com.codemaster.testlog.util;
+
+
+import lombok.Getter;
+
+@Getter
+public class FormattedMsg {
+    private final String message;
+    private final Throwable throwable;
+    private final Object[] argArray;
+
+    public FormattedMsg(String message) {
+        this(message, null, null);
+    }
+
+    public FormattedMsg(String message, Object[] argArray, Throwable throwable) {
+        this.message = message;
+        this.throwable = throwable;
+        this.argArray = argArray;
+    }
+}
